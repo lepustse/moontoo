@@ -28,12 +28,13 @@ tz_init:
 	ldr sp, =mon_stack_limit
 
 	bl main
+	ldr lr, =tz_init
+	b asm_sum
 	b .
 
 .global asm_sum
 asm_sum:
-	add r0, r0, r1
-	mov pc, lr
+	b tz_init
 
 .global mon_stack_limit
 .bss
