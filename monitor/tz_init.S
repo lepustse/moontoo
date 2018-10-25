@@ -30,6 +30,11 @@ tz_init:
 	bl main
 	b .
 
+.global asm_sum
+asm_sum:
+	add r0, r0, r1
+	mov pc, lr
+
 .global mon_stack_limit
 .bss
 .align 2   //align to  2~2=4
