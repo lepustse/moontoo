@@ -15,3 +15,9 @@ void main(void) {
 	sum = asm_sum(3, 2);
 	printf("3 + 2 = %u\n", sum);
 }
+
+// r0
+void show_num(int num)
+{
+	printf("num: %d\n", num);
+}

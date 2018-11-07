@@ -28,6 +28,15 @@ tz_init:
 	ldr sp, =mon_stack_limit
 
 	bl main
+	mov r1, #1
+	mov r2, #0
+2:
+	add r2, r2, r1
+	add r1, r1, #1
+	cmp r1, #100
+	ble 2b
+	mov r0, r2
+	bl show_num
 	b .
 
 .global asm_sum
