@@ -17,7 +17,10 @@ void main(void) {
 }
 
 // r0
-void show_num(int num)
+void show_num(unsigned int num)
 {
-	printf("num: %d\n", num);
+//	printf("num: %d\n", num);
+	//num = 2;
+	printf("num: 0x%x\n", num);
+	//printf("num's addr: 0x%x\n", &num);
 }

@@ -37,6 +37,18 @@ tz_init:
 	ble 2b
 	mov r0, r2
 	bl show_num
+
+	cps #Mode_IRQ
+	ldr sp, =moontu_irq
+	mrs r0, cpsr
+	and r0, #0x1f
+	bl show_num
+
+	cps #Mode_SVC
+	mrs r0, cpsr
+	and r0, #0x1f
+	bl show_num
+
 	b .
 
 .global asm_sum
@@ -50,3 +62,17 @@ asm_sum:
 mon_stack:
 	.space (1 << 16) //64k stack
 mon_stack_limit:
+
+.global moontu_irq
+.bss
+.align 2   //align to  2~2=4
+irq_stack:
+	.space (1 << 16) //64k stack
+moontu_irq:
+
+.global moontn_usr
+.bss
+.align 2   //align to  2~2=4
+usr_stack:
+	.space (1 << 16) //64k stack
+moontn_usr:
