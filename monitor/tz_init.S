@@ -60,7 +60,18 @@ tz_init:
 	add r0, r0, r1
 	bl show_num
 
+	bl fun
+	mov r0, #0xb
+	bl show_num
+
 	b .
+
+fun:
+	push {lr}
+	mov r0, #0xc
+	bl show_num
+	pop {lr}
+	mov pc, lr
 
 .global asm_sum
 asm_sum:
