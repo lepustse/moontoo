@@ -38,40 +38,22 @@ tz_init:
 	mov r0, r2
 	bl show_num
 
-//	cps #Mode_IRQ
-//	ldr sp, =moontu_irq
-//	mrs r0, cpsr
-//	and r0, #0x1f
-//	bl show_num
-//
-//	cps #Mode_SVC
-//	mrs r0, cpsr
-//	and r0, #0x1f
-//	bl show_num
-	mov r0, #1
-	mov r1, #2
-	add r0, r0, r1
-	push {r0}
 
-	mov r0, #3
-	mov r1, #4
-	add r0, r0, r1
-	pop {r1}
-	add r0, r0, r1
+	mrs r0, cpsr
+	and r0, #0x1f
 	bl show_num
 
-	bl fun
-	mov r0, #0xb
+	cps #Mode_USR
+	mrs r0, cpsr
+	and r0, #0x1f
+	bl show_num
+
+	cps #Mode_SVC
+	mrs r0, cpsr
+	and r0, #0x1f
 	bl show_num
 
 	b .
-
-fun:
-	push {lr}
-	mov r0, #0xc
-	bl show_num
-	pop {lr}
-	mov pc, lr
 
 .global asm_sum
 asm_sum:
