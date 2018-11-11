@@ -28,12 +28,13 @@ tz_init:
 	ldr sp, =mon_stack_limit
 
 	bl main
-	mov r1, #1
-	mov r2, #0
 
 	mrs r0, cpsr
 	and r0, #0x1f
 	bl show_num
+	
+	ldr r0, =arm_vector_table
+	mcr p15, 0, r0, c12, c0, 0
 
 	cps #Mode_USR
 	ldr sp, =moontu_usr
@@ -41,7 +42,57 @@ tz_init:
 	and r0, #0x1f
 	bl show_num
 
+	swi #0
+
+	// svc lr
+	bl show_status
+	mrs r0, cpsr
+	and r0, #0x1f
+	bl show_num
+
 	b .
+
+.align 5          //align to 2~5=32
+arm_vector_table:
+//	the order is fixed and cannot to modify
+    ldr pc, =arm_reset_exception
+	ldr pc, =arm_undefined_inst_exception
+	// !@ step 5:
+	ldr pc, =arm_swi_syscall
+	ldr pc, =arm_prefetch_abort_exception
+	ldr pc, =arm_data_abort_exception
+	ldr pc, =arm_reset_exception
+	ldr pc, =arm_irq_exception
+	ldr pc, =arm_fiq_exception
+
+arm_reset_exception:
+	b .
+arm_undefined_inst_exception:
+	b .
+arm_swi_syscall:
+	push {lr}
+
+	mrs r0, cpsr
+	and r0, #0x1f
+	bl show_num
+
+	bl svc_handle
+	pop {lr}
+
+	// s: change cpsr
+	// spsr -> cpsr
+	movs pc, lr
+	// not change cpsr, so it cannot change mode
+	//bx lr
+
+arm_prefetch_abort_exception:
+	b .
+arm_data_abort_exception:
+	b .
+arm_irq_exception:
+	b .
+arm_fiq_exception:
+    b .
 
 .global asm_sum
 asm_sum:
