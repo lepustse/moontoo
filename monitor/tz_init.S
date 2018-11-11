@@ -30,28 +30,16 @@ tz_init:
 	bl main
 	mov r1, #1
 	mov r2, #0
-2:
-	add r2, r2, r1
-	add r1, r1, #1
-	cmp r1, #100
-	ble 2b
-	mov r0, r2
-	bl show_num
 
 	mrs r0, cpsr
 	and r0, #0x1f
 	bl show_num
 
 	cps #Mode_USR
+	ldr sp, =moontu_usr
 	mrs r0, cpsr
 	and r0, #0x1f
-	ldr sp, =moontu_usr
 	bl show_num
-
-	//cps #Mode_SVC
-	//mrs r0, cpsr
-	//and r0, #0x1f
-	//bl show_num
 
 	b .
 
