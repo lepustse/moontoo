@@ -42,9 +42,10 @@ tz_init:
 	and r0, #0x1f
 	bl show_num
 
+	// call svc
+	// SWI: the addr of the following instraction will transfer svc lr
 	swi #0
 
-	// svc lr
 	bl show_status
 	mrs r0, cpsr
 	and r0, #0x1f
@@ -57,7 +58,7 @@ arm_vector_table:
 //	the order is fixed and cannot to modify
     ldr pc, =arm_reset_exception
 	ldr pc, =arm_undefined_inst_exception
-	// !@ step 5:
+	// !@ step 5: hardware auto
 	ldr pc, =arm_swi_syscall
 	ldr pc, =arm_prefetch_abort_exception
 	ldr pc, =arm_data_abort_exception
