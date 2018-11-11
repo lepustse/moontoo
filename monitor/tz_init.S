@@ -38,7 +38,6 @@ tz_init:
 	mov r0, r2
 	bl show_num
 
-
 	mrs r0, cpsr
 	and r0, #0x1f
 	bl show_num
@@ -46,12 +45,13 @@ tz_init:
 	cps #Mode_USR
 	mrs r0, cpsr
 	and r0, #0x1f
+	ldr sp, =moontu_usr
 	bl show_num
 
-	cps #Mode_SVC
-	mrs r0, cpsr
-	and r0, #0x1f
-	bl show_num
+	//cps #Mode_SVC
+	//mrs r0, cpsr
+	//and r0, #0x1f
+	//bl show_num
 
 	b .
 
@@ -74,9 +74,9 @@ irq_stack:
 	.space (1 << 16) //64k stack
 moontu_irq:
 
-.global moontn_usr
+.global moontu_usr
 .bss
 .align 2   //align to  2~2=4
 usr_stack:
 	.space (1 << 16) //64k stack
-moontn_usr:
+moontu_usr:
