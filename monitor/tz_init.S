@@ -42,7 +42,20 @@ tz_init:
 	add r0, r0, r1
 	bl show_num
 
+	// !@ lr is destroyed, how to return?
+	// bl instuction can change lr
+	bl fun
+	mov r0, #0xB
+	bl show_num
+
 	b .
+
+fun:
+	push {lr}
+	mov r0, #0xC
+	bl show_num
+	pop {lr}
+	mov pc, lr
 
 .global asm_sum
 asm_sum:
