@@ -28,50 +28,8 @@ tz_init:
 	ldr sp, =mon_stack_limit
 
 	bl main
-	mov r1, #1
-	mov r2, #0
-2:
-	add r2, r2, r1
-	add r1, r1, #1
-	cmp r1, #100
-	ble 2b
-	mov r0, r2
-	bl show_num
-
-//	cps #Mode_IRQ
-//	ldr sp, =moontu_irq
-//	mrs r0, cpsr
-//	and r0, #0x1f
-//	bl show_num
-//
-//	cps #Mode_SVC
-//	mrs r0, cpsr
-//	and r0, #0x1f
-//	bl show_num
-	mov r0, #1
-	mov r1, #2
-	add r0, r0, r1
-	push {r0}
-
-	mov r0, #3
-	mov r1, #4
-	add r0, r0, r1
-	pop {r1}
-	add r0, r0, r1
-	bl show_num
-
-	bl fun
-	mov r0, #0xb
-	bl show_num
 
 	b .
-
-fun:
-	push {lr}
-	mov r0, #0xc
-	bl show_num
-	pop {lr}
-	mov pc, lr
 
 .global asm_sum
 asm_sum:
@@ -84,17 +42,3 @@ asm_sum:
 mon_stack:
 	.space (1 << 16) //64k stack
 mon_stack_limit:
-
-.global moontu_irq
-.bss
-.align 2   //align to  2~2=4
-irq_stack:
-	.space (1 << 16) //64k stack
-moontu_irq:
-
-.global moontn_usr
-.bss
-.align 2   //align to  2~2=4
-usr_stack:
-	.space (1 << 16) //64k stack
-moontn_usr:

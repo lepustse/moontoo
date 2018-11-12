@@ -15,12 +15,3 @@ void main(void) {
 	sum = asm_sum(3, 2);
 	printf("3 + 2 = %u\n", sum);
 }
-
-// r0
-void show_num(unsigned int num)
-{
-//	printf("num: %d\n", num);
-	//num = 2;
-	printf("num: 0x%x\n", num);
-	//printf("num's addr: 0x%x\n", &num);
-}
