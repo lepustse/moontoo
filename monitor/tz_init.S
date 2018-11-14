@@ -44,7 +44,8 @@ tz_init:
 
 	// call svc
 	// SWI: the addr of the following instraction will transfer svc lr
-	swi #0
+	//swi #0
+	bl swi_func
 
 	bl show_status
 	mrs r0, cpsr
@@ -52,6 +53,10 @@ tz_init:
 	bl show_num
 
 	b .
+
+swi_func:
+	swi #0
+	bx lr
 
 .align 5          //align to 2~5=32
 arm_vector_table:
@@ -78,13 +83,13 @@ arm_swi_syscall:
 	bl show_num
 
 	bl svc_handle
-	pop {lr}
 
+	pop {lr}
 	// s: change cpsr
 	// spsr -> cpsr
 	movs pc, lr
 	// not change cpsr, so it cannot change mode
-	//bx lr
+	//bx r0
 
 arm_prefetch_abort_exception:
 	b .
@@ -120,3 +125,4 @@ moontu_irq:
 usr_stack:
 	.space (1 << 16) //64k stack
 moontu_usr:
+
