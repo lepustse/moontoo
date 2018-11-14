@@ -45,6 +45,7 @@ tz_init:
 	// call svc
 	// SWI: the addr of the following instraction will transfer svc lr
 	//swi #0
+	//bx lr
 	bl swi_func
 
 	bl show_status
@@ -76,20 +77,22 @@ arm_reset_exception:
 arm_undefined_inst_exception:
 	b .
 arm_swi_syscall:
-	push {lr}
-
+	mov r0, lr
+	
+	// SYS 模式，不需要设置栈，SYS与USR只是权限不同而已
+	cps #Mode_SYS
+	push {r0, lr}
 	mrs r0, cpsr
 	and r0, #0x1f
 	bl show_num
 
 	bl svc_handle
 
-	pop {lr}
+	pop {r0, lr}
 	// s: change cpsr
 	// spsr -> cpsr
-	movs pc, lr
 	// not change cpsr, so it cannot change mode
-	//bx r0
+	bx r0
 
 arm_prefetch_abort_exception:
 	b .
