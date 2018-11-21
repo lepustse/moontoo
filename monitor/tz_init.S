@@ -54,6 +54,12 @@ lj:
 	eor r1, r0, r1
 	eor r0, r0, r1
 
+	cmp r1, #0
+	// 当 Z 位为1时，才执行moveq 或 addeq
+	// 这种做法不满足条件就nop，性能较跳转的高
+	// 跳转涉及到流水线问题...
+	// moveq r1, #1
+	addeq r1, #1
 	ldm r1, {r1-r13, lr}
 	mov pc, lr
 
