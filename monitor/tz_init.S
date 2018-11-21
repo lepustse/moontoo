@@ -49,6 +49,7 @@ lj:
 	// 调换r0 r1的值
 	// r0: buff
 	// r1: param
+	// todo: 如果param为0，需要强制变成1
 	eor r0, r0, r1
 	eor r1, r0, r1
 	eor r0, r0, r1
