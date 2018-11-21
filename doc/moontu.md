@@ -38,3 +38,11 @@ arm_reset_exception:
 	b.
 ```
 
+- 模式切换时硬件行为
+	- 关中断
+	- 设置x模式的lr
+	- spsr备份cpsr
+	- 模式切换至x
+	- pc = arm\_vertor\_table
+
+
