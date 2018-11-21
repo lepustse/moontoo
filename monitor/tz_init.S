@@ -31,6 +31,20 @@ tz_init:
 
 	b .
 
+.global sj
+sj:
+	stm r0, {r1-lr}
+	mov r0, #0
+	mov pc, lr
+
+.global lj
+lj:
+	eor r0, r0, r1
+	eor r1, r0, r1
+	eor r0, r0, r1
+	ldm r1, {r1-r13, lr}
+	mov pc, lr
+
 .global mon_stack_limit
 .bss
 .align 2   //align to  2~2=4
