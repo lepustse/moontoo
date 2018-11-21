@@ -31,17 +31,28 @@ tz_init:
 
 	b .
 
+// int sj(void *jmpbf[])
+// 返回0 或 非0
+// 如果lj的参数是0，要强制变成1
 .global sj
 sj:
+	// 保存reg
 	stm r0, {r1-lr}
+	// 返回0
 	mov r0, #0
 	mov pc, lr
 
+// void lj(void *jmpbf[], int param)
+// param: 按照此值返回，如果是0，强制变成1
 .global lj
 lj:
+	// 调换r0 r1的值
+	// r0: buff
+	// r1: param
 	eor r0, r0, r1
 	eor r1, r0, r1
 	eor r0, r0, r1
+
 	ldm r1, {r1-r13, lr}
 	mov pc, lr
 
