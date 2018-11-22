@@ -77,6 +77,7 @@ arm_reset_exception:
 arm_undefined_inst_exception:
 	b .
 arm_swi_syscall:
+	// todo: 修改spsr的方式切到sys模式
 	mov r0, lr
 	
 	// SYS 模式，不需要设置栈，SYS与USR只是权限不同而已
