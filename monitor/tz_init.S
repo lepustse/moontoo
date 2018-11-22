@@ -89,9 +89,6 @@ arm_swi_syscall:
 	bl svc_handle
 
 	pop {r0, lr}
-	// s: change cpsr
-	// spsr -> cpsr
-	// not change cpsr, so it cannot change mode
 	bx r0
 
 arm_prefetch_abort_exception:
