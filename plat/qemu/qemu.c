@@ -19,24 +19,41 @@ static inline void mt_list_init(mt_list_t *l) {
 	l->prev = l;
 }
 
-static inline mt_list_insert_after(mt_list_t *l, mt_list_t *n) {
+// 在节点l后，插入节点n
+static inline void mt_list_insert_after(mt_list_t *l, mt_list_t *n) {
 	l->next->prev = n;
 	n->next = l->next;
 
 	l->next = n;
 	n->prev = l;
 }
-static inline mt_list_insert_before(mt_list_t *l, mt_list_t *n) {}
 
+// 在节点l前，插入节点n
+static inline void mt_list_insert_before(mt_list_t *l, mt_list_t *n) {
+	l->prev->next = n;
+	n->prev = l->prev;
+
+	l->prev = n;
+	n->next = l;
+}
+
+// 移除节点n
+static inline void mt_list_remove(mt_list_t *n) {}
+
+// 链表长度
+static inline unsigned int mt_list_len(const mt_list_t *l) {}
+
+// list 操作宏
 #define mt_list_entry(node, type, member) \
 	mt_container_of(node, type, member)
 
 /* ----------------------- moontu list end ----------------------- */
 
+// 学生信息
 struct stu {
 	char *name;
 	unsigned int num;
-	struct mt_list_t l;
+	mt_list_t l;
 };
 
 static struct stu *__create() {}
