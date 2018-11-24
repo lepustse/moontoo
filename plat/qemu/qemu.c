@@ -38,14 +38,39 @@ static inline void mt_list_insert_before(mt_list_t *l, mt_list_t *n) {
 }
 
 // 移除节点n
-static inline void mt_list_remove(mt_list_t *n) {}
+static inline void mt_list_remove(mt_list_t *n) {
+	n->next->prev = n->prev;
+	n->prev->next = n->next;
 
-// 链表长度
-static inline unsigned int mt_list_len(const mt_list_t *l) {}
+	n->next = n;
+	n->prev = n;
+}
 
-// list 操作宏
+// 得到用户结构体指针
 #define mt_list_entry(node, type, member) \
 	mt_container_of(node, type, member)
+
+// 向前遍历链表
+#define mt_list_for_each(pos, head) \
+	for (pos = (head)->next; pos != (head); pos = pos->next)
+
+// 向后遍历链表
+#define mt_list_for_each_prev(pos, head) \
+	for (pos = (head)->prev; pos != (head); pos = pos->prev)
+
+// 遍历链表安全移除...
+#define mt_list_for_each_safe(pos, n, head)
+
+// 遍历特定类型
+#define mt_list_for_each_entry()
+
+// 
+
+// 得到链表的第一个成员
+#define mt_list_first_entry(ptr, type, member)
+
+// 得到链表最后一个成员
+#define mt_list_last_entry(ptr, type, member)
 
 /* ----------------------- moontu list end ----------------------- */
 
@@ -72,13 +97,15 @@ void main(void) {
 	for (i = 1; i <= 100; i++) {
 		sum += i;
 	}
-	printf("1 + 2 + ... + 100 = %d\n", sum);
-	printf("hello world!\n");
+	//printf("1 + 2 + ... + 100 = %d\n", sum);
+	//printf("hello world!\n");
+
 	int offset = mt_offset_of(struct stu, name);
-	printf("offset: %d\n", offset);
+	//printf("offset: %d\n", offset);
 	offset = mt_offset_of(struct stu, num);
-	printf("offset: %d\n", offset);
+	//printf("offset: %d\n", offset);
 	struct stu *p = mt_container_of(&(a.num), struct stu, num);
-	printf("%x\n", p);
+	//printf("%x\n", p);
+
 }
 
