@@ -1,5 +1,16 @@
 #include "all.h"
 
+typedef unsigned int mt_size_t;
+
+/* ----------------------- moontu sys API ------------------------ */
+void mt_malloc(mt_size_t size) {
+
+}
+
+void mt_free(void *ptr) {
+
+}
+
 /* ---------------------- moontu list start ---------------------- */
 
 #define mt_offset_of(type, member) ((int)&(((type *)0)->member))
@@ -58,19 +69,13 @@ static inline void mt_list_remove(mt_list_t *n) {
 #define mt_list_for_each_prev(pos, head) \
 	for (pos = (head)->prev; pos != (head); pos = pos->prev)
 
-// 遍历链表安全移除...
-#define mt_list_for_each_safe(pos, n, head)
-
-// 遍历特定类型
-#define mt_list_for_each_entry()
-
-// 
-
 // 得到链表的第一个成员
-#define mt_list_first_entry(ptr, type, member)
+#define mt_list_first_entry(ptr, type, member) \
+	mt_list_entry((ptr)->next, type, member)
 
 // 得到链表最后一个成员
-#define mt_list_last_entry(ptr, type, member)
+#define mt_list_last_entry(ptr, type, member) \
+	mt_list_entry((ptr)->prev, type, member)
 
 /* ----------------------- moontu list end ----------------------- */
 
@@ -80,14 +85,25 @@ struct stu {
 	unsigned int num;
 	mt_list_t l;
 };
+typedef struct stu stu_t;
 
-static struct stu *__create() {}
-static void __destroy() {}
+stu_t * stu_reg(char *name, unsigned int num) {
+	stu_t *thiz;
 
-struct stu *stu_reg() {}
-void stu_unreg() {}
-void stu_find() {}
-void stu_print() {}
+	return thiz;
+}
+
+void stu_unreg(stu_t *thiz) {
+
+}
+
+void stu_find(unsigned int num) {
+
+}
+
+void stu_list(stu_t *thiz) {
+
+}
 
 void main(void) {
 	int i;
@@ -97,15 +113,16 @@ void main(void) {
 	for (i = 1; i <= 100; i++) {
 		sum += i;
 	}
-	//printf("1 + 2 + ... + 100 = %d\n", sum);
-	//printf("hello world!\n");
+	printf("1 + 2 + ... + 100 = %d\n", sum);
+	printf("hello world!\n");
 
 	int offset = mt_offset_of(struct stu, name);
-	//printf("offset: %d\n", offset);
+	printf("offset: %d\n", offset);
 	offset = mt_offset_of(struct stu, num);
-	//printf("offset: %d\n", offset);
+	printf("offset: %d\n", offset);
 	struct stu *p = mt_container_of(&(a.num), struct stu, num);
-	//printf("%x\n", p);
+	printf("%x\n", p);
 
+	
 }
 

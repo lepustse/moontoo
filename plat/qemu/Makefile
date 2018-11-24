@@ -39,6 +39,9 @@ DUMP_DIR := $(TOP)/dump
 #CCFLAGS := -g -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
 #CCFLAGS := -O2 -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
 CCFLAGS := -O2 -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
+#CCFLAGS := -O2 -fno-strict-aliasing -fno-common -mfpu=vfpv3 
+# 体验 no=buildtin，gcc 自动生成memset
+#-fno-builtin
 # by me
 #CCFLAGS := -O0 -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
 CCFLAGS += -ffreestanding -nostdinc -isystem -pipe -marm  -mabi=aapcs-linux -std=gnu99
