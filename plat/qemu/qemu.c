@@ -83,8 +83,11 @@ static inline int mt_list_isempty(mt_list_t *l) {
 
 /* ----------------------- moontu list end ----------------------- */
 
+struct type;
+typedef void (*ds_t)(struct type *ptype);
+
 struct type {
-	int h_type;
+	ds_t func;
 	mt_list_t l;
 };
 
@@ -100,10 +103,22 @@ struct tea {
 	struct type tea_t;
 };
 
+struct wok {
+	char *name;
+	struct type wok_t;
+};
+
+void sch_tea_display(struct type *ptype);
+void sch_stu_display(struct type *ptype);
+void sch_wok_display(struct type *ptype);
+
 struct tea t_a;
 struct tea t_b;
+
 struct stu s_a;
 struct stu s_b;
+
+struct wok w_a;
 
 mt_list_t head;
 
@@ -114,7 +129,8 @@ void sch_tea_init(struct tea *ptea, char *name) {
 	// todo: 后面要用memcpy处理
 	ptea->name = name;
 
-	ptea->tea_t.h_type = 1;
+	//ptea->tea_t.h_type = 1;
+	ptea->tea_t.func = sch_tea_display;
 	mt_list_init(&ptea->tea_t.l);
 }
 
@@ -126,13 +142,23 @@ void sch_tea_insert(mt_list_t *h, struct tea *ptea) {
 void sch_stu_init(struct stu *pstu, char *name, int num) {
 	pstu->name = name;
 	pstu->num = num;
-	pstu->stu_t.h_type = 2;
+	pstu->stu_t.func = sch_stu_display;
 	mt_list_init(&pstu->stu_t.l);
 }
 
 // 将当前学生链到list上去
 void sch_stu_insert(mt_list_t *h, struct stu *pstu) {
 	mt_list_insert_after(h, &pstu->stu_t.l);
+}
+
+void sch_wok_init(struct wok *pwok, char *name) {
+	pwok->name = name;
+	pwok->wok_t.func = sch_wok_display;
+	mt_list_init(&pwok->wok_t.l);
+}
+
+void sch_wok_insert(mt_list_t *h, struct wok *pwok) {
+	mt_list_insert_after(h, &pwok->wok_t.l);
 }
 
 // 把所有老师学生都打出来
@@ -145,14 +171,32 @@ void sch_display_all(mt_list_t *h) {
 
 	mt_list_for_each(ptmp, h) {
 		ptype = mt_list_entry(ptmp, struct type, l);
-		if (ptype->h_type == 1) {
-			printf("teacher: %s\n", mt_list_entry(ptype, struct tea, tea_t)->name);
-		} else if (ptype->h_type == 2) {
-			struct stu *pstu;
-			pstu = mt_list_entry(ptype, struct stu, stu_t);
-			printf("student: %s, num: %d\n", pstu->name, pstu->num);
-		}
+		// 这是bug，初始化里定义func，但从头到尾没有使用，而是用了传参的方法调用专用打印函数
+		//func(ptype);
+		// 这才叫使用定义了的函数指针
+		ptype->func(ptype);
 	}
+}
+
+void sch_tea_display(struct type *ptype) {
+	struct tea *p;
+
+	p = mt_list_entry(ptype, struct tea, tea_t);
+	printf("teacher: %s\n", p->name);
+}
+
+void sch_stu_display(struct type *ptype) {
+	struct stu *p;
+
+	p = mt_list_entry(ptype, struct stu, stu_t);
+	printf("student: %s, num: %d\n", p->name, p->num);
+}
+
+void sch_wok_display(struct type *ptype) {
+	struct wok *p;
+
+	p = mt_list_entry(ptype, struct wok, wok_t);
+	printf("worker: %s\n", p->name);
 }
 
 void main(void) {
@@ -168,14 +212,18 @@ void main(void) {
 	mt_list_init(&head);
 	sch_tea_init(&t_a, "aaa");
 	sch_tea_init(&t_b, "bbb");
-	sch_stu_init(&s_a, "tuzi", 1);
-	sch_stu_init(&s_b, "never", 2);
 
 	sch_tea_insert(&head, &t_a);
 	sch_tea_insert(&head, &t_b);
 
+	sch_stu_init(&s_a, "tuzi", 1);
+	sch_stu_init(&s_b, "never", 2);
+
 	sch_stu_insert(&head, &s_a);
 	sch_stu_insert(&head, &s_b);
+
+	sch_wok_init(&w_a, "zhangyi");
+	sch_wok_insert(&head, &w_a);
 
 	sch_display_all(&head);
 }
