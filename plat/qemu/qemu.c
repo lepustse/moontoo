@@ -57,6 +57,10 @@ static inline void mt_list_remove(mt_list_t *n) {
 	n->prev = n;
 }
 
+// 测试是否为空
+static inline int mt_list_isempty(mt_list_t *l) {
+	return l->next == l;
+}
 // 得到用户结构体指针
 #define mt_list_entry(node, type, member) \
 	mt_container_of(node, type, member)
@@ -79,36 +83,79 @@ static inline void mt_list_remove(mt_list_t *n) {
 
 /* ----------------------- moontu list end ----------------------- */
 
-// 学生信息
-struct stu {
-	char *name;
-	unsigned int num;
+struct type {
+	int h_type;
 	mt_list_t l;
 };
-typedef struct stu stu_t;
 
-stu_t * stu_reg(char *name, unsigned int num) {
-	stu_t *thiz;
+struct stu {
+	char *name;
+	int num;
+	struct type stu_t;
+};
 
-	return thiz;
+struct tea {
+	// todo: 后面要把char* 改为数组
+	char *name;
+	struct type tea_t;
+};
+
+struct tea t_a;
+struct tea t_b;
+struct stu s_a;
+struct stu s_b;
+
+mt_list_t head;
+
+// 不要用malloc和free，用几个全局变量就行了
+void sch_tea_init(struct tea *ptea, char *name) {
+	// 这是个潜藏的bug，""的地址是在read only的，全局变量
+	// 如果是局部变量，就会崩溃了
+	// todo: 后面要用memcpy处理
+	ptea->name = name;
+
+	ptea->tea_t.h_type = 1;
+	mt_list_init(&(ptea->tea_t.l));
 }
 
-void stu_unreg(stu_t *thiz) {
-
+// 将当前老师链到list上去
+void sch_tea_insert(mt_list_t *h, struct tea *ptea) {
+	mt_list_insert_after(h, &(ptea->tea_t.l));
 }
 
-void stu_find(unsigned int num) {
-
+void sch_stu_init(struct stu *pstu, char *name, int num) {
+	pstu->name = name;
+	pstu->num = num;
+	pstu->stu_t.h_type = 2;
+	mt_list_init(&(pstu->stu_t.l));
 }
 
-void stu_list(stu_t *thiz) {
+// 将当前学生链到list上去
+void sch_stu_insert(mt_list_t *h, struct stu *pstu) {
+	mt_list_insert_after(h, &(pstu->stu_t.l));
+}
 
+// 把所有老师学生都打出来
+// 老师只打印名字，学生打名字和学号
+// teacher: tuzi
+// student: never, num: 1
+void sch_display_all(mt_list_t *h) {
+	struct type *ptype;
+	mt_list_t *ptmp;
+
+	mt_list_for_each(ptmp, h) {
+		ptype = mt_list_entry(ptmp, struct type, l);
+		if (ptype->h_type == 1) {
+			printf("teacher: %s\n", mt_list_entry(ptype, struct tea, tea_t)->name);
+		} else if (ptype->h_type == 2) {
+			printf("student: %s, num: %d\n", mt_list_entry(ptype, struct stu, stu_t)->name, mt_list_entry(ptype, struct stu, stu_t)->num);
+		}
+	}
 }
 
 void main(void) {
 	int i;
 	int sum = 0;
-	struct stu a;
 
 	for (i = 1; i <= 100; i++) {
 		sum += i;
@@ -116,13 +163,18 @@ void main(void) {
 	printf("1 + 2 + ... + 100 = %d\n", sum);
 	printf("hello world!\n");
 
-	int offset = mt_offset_of(struct stu, name);
-	printf("offset: %d\n", offset);
-	offset = mt_offset_of(struct stu, num);
-	printf("offset: %d\n", offset);
-	struct stu *p = mt_container_of(&(a.num), struct stu, num);
-	printf("%x\n", p);
+	mt_list_init(&head);
+	sch_tea_init(&t_a, "aaa");
+	sch_tea_init(&t_b, "bbb");
+	sch_stu_init(&s_a, "tuzi", 1);
+	sch_stu_init(&s_b, "never", 2);
 
-	
+	sch_tea_insert(&head, &t_a);
+	sch_tea_insert(&head, &t_b);
+
+	sch_stu_insert(&head, &s_a);
+	sch_stu_insert(&head, &s_b);
+
+	sch_display_all(&head);
 }
 
