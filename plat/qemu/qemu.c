@@ -115,24 +115,24 @@ void sch_tea_init(struct tea *ptea, char *name) {
 	ptea->name = name;
 
 	ptea->tea_t.h_type = 1;
-	mt_list_init(&(ptea->tea_t.l));
+	mt_list_init(&ptea->tea_t.l);
 }
 
 // 将当前老师链到list上去
 void sch_tea_insert(mt_list_t *h, struct tea *ptea) {
-	mt_list_insert_after(h, &(ptea->tea_t.l));
+	mt_list_insert_after(h, &ptea->tea_t.l);
 }
 
 void sch_stu_init(struct stu *pstu, char *name, int num) {
 	pstu->name = name;
 	pstu->num = num;
 	pstu->stu_t.h_type = 2;
-	mt_list_init(&(pstu->stu_t.l));
+	mt_list_init(&pstu->stu_t.l);
 }
 
 // 将当前学生链到list上去
 void sch_stu_insert(mt_list_t *h, struct stu *pstu) {
-	mt_list_insert_after(h, &(pstu->stu_t.l));
+	mt_list_insert_after(h, &pstu->stu_t.l);
 }
 
 // 把所有老师学生都打出来
@@ -148,7 +148,9 @@ void sch_display_all(mt_list_t *h) {
 		if (ptype->h_type == 1) {
 			printf("teacher: %s\n", mt_list_entry(ptype, struct tea, tea_t)->name);
 		} else if (ptype->h_type == 2) {
-			printf("student: %s, num: %d\n", mt_list_entry(ptype, struct stu, stu_t)->name, mt_list_entry(ptype, struct stu, stu_t)->num);
+			struct stu *pstu;
+			pstu = mt_list_entry(ptype, struct stu, stu_t);
+			printf("student: %s, num: %d\n", pstu->name, pstu->num);
 		}
 	}
 }
@@ -177,4 +179,3 @@ void main(void) {
 
 	sch_display_all(&head);
 }
-
