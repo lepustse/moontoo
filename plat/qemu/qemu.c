@@ -165,7 +165,7 @@ void sch_wok_insert(mt_list_t *h, struct wok *pwok) {
 // 老师只打印名字，学生打名字和学号
 // teacher: tuzi
 // student: never, num: 1
-void sch_display_all(mt_list_t *h) {
+void sch_display_human(mt_list_t *h) {
 	struct type *ptype;
 	mt_list_t *ptmp;
 
@@ -225,5 +225,5 @@ void main(void) {
 	sch_wok_init(&w_a, "zhangyi");
 	sch_wok_insert(&head, &w_a);
 
-	sch_display_all(&head);
+	sch_display_human(&head);
 }
