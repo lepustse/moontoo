@@ -87,7 +87,7 @@ struct type;
 typedef void (*ds_t)(struct type *ptype);
 
 struct type {
-	ds_t func;
+	ds_t disp_me;
 	mt_list_t l;
 };
 
@@ -130,7 +130,7 @@ void sch_tea_init(struct tea *ptea, char *name) {
 	ptea->name = name;
 
 	//ptea->tea_t.h_type = 1;
-	ptea->tea_t.func = sch_tea_display;
+	ptea->tea_t.disp_me = sch_tea_display;
 	mt_list_init(&ptea->tea_t.l);
 }
 
@@ -142,7 +142,7 @@ void sch_tea_insert(mt_list_t *h, struct tea *ptea) {
 void sch_stu_init(struct stu *pstu, char *name, int num) {
 	pstu->name = name;
 	pstu->num = num;
-	pstu->stu_t.func = sch_stu_display;
+	pstu->stu_t.disp_me = sch_stu_display;
 	mt_list_init(&pstu->stu_t.l);
 }
 
@@ -153,7 +153,7 @@ void sch_stu_insert(mt_list_t *h, struct stu *pstu) {
 
 void sch_wok_init(struct wok *pwok, char *name) {
 	pwok->name = name;
-	pwok->wok_t.func = sch_wok_display;
+	pwok->wok_t.disp_me = sch_wok_display;
 	mt_list_init(&pwok->wok_t.l);
 }
 
@@ -171,10 +171,10 @@ void sch_display_human(mt_list_t *h) {
 
 	mt_list_for_each(ptmp, h) {
 		ptype = mt_list_entry(ptmp, struct type, l);
-		// 这是bug，初始化里定义func，但从头到尾没有使用，而是用了传参的方法调用专用打印函数
-		//func(ptype);
+		// 这是bug，初始化里定义disp_me，但从头到尾没有使用，而是用了传参的方法调用专用打印函数
+		//disp_me(ptype);
 		// 这才叫使用定义了的函数指针
-		ptype->func(ptype);
+		ptype->disp_me(ptype);
 	}
 }
 
