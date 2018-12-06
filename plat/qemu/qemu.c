@@ -10,13 +10,24 @@ void main(void) {
 	int sum = 0;
 	int ret;
 
+    //printf("jmpbf addr: 0x%x\n", *jmpbf);
+
 	ret = sj(jmpbf);
 	if (ret == 0) {
 		printf("sj exit\n");
-	}else {
+	} else {
 		printf("lj exit, ret: %d\n", ret);
 		while(1);
 	}
+
+    //printf("jmpbf addr: 0x%x\n", *jmpbf);
+    void **p = jmpbf;
+    int k = 0;
+    for (int j = 0; j < 14; j++) {
+        k++; 
+        printf("jmpbf%d: 0x%x\n", k, *p);
+        p++;
+    }
 
 	for (i = 1; i <= 100; i++) {
 		sum += i;
