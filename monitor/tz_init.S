@@ -1,4 +1,4 @@
-#define  Mode_USR       0x10
+
 #define  Mode_FIQ       0x11
 #define  Mode_IRQ       0x12
 #define  Mode_SVC       0x13
@@ -37,7 +37,8 @@ tz_init:
 .global sj
 sj:
 	// 保存reg
-	stm r0, {r1-lr}
+	//stm r0, {r1-lr}
+    stm r0, {r4-r14}
 	// 返回0
 	mov r0, #0
 	mov pc, lr
@@ -60,7 +61,8 @@ lj:
 	// 跳转涉及到流水线问题...
 	// moveq r1, #1
 	addeq r1, #1
-	ldm r1, {r1-r13, lr}
+	//ldm r1, {r1-r13, lr}
+    ldm r1, {r4-r14}
 	mov pc, lr
 
 .global mon_stack_limit

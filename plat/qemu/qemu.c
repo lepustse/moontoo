@@ -3,7 +3,7 @@
 int sj(void *jmpbf[]);
 void lj(void *jmpbf[], int param);
 
-void *jmpbf[14];
+void *jmpbf[10];
 
 void main(void) {
 	int i;
@@ -20,12 +20,12 @@ void main(void) {
 		while(1);
 	}
 
-    //printf("jmpbf addr: 0x%x\n", *jmpbf);
+    printf("jmpbf addr: 0x%x\n", *jmpbf);
     void **p = jmpbf;
-    int k = 0;
-    for (int j = 0; j < 14; j++) {
-        k++; 
+    int k = 4;
+    for (int j = 0; j < 10; j++) {
         printf("jmpbf%d: 0x%x\n", k, *p);
+        k++; 
         p++;
     }
 
