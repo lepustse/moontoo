@@ -10,8 +10,6 @@ void main(void) {
 	int sum = 0;
 	int ret;
 
-    //printf("jmpbf addr: 0x%x\n", *jmpbf);
-
 	ret = sj(jmpbf);
 	if (ret == 0) {
 		printf("sj exit\n");
@@ -20,7 +18,6 @@ void main(void) {
 		while(1);
 	}
 
-    printf("jmpbf addr: 0x%x\n", *jmpbf);
     void **p = jmpbf;
     int k = 4;
     for (int j = 0; j < 10; j++) {
