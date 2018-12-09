@@ -38,6 +38,8 @@ tz_init:
 sj:
 	// 保存reg
 	//stm r0, {r1-lr}
+    // r0 jmpbf数组首地址
+    // 将寄存器的内容保存到jmpbf数组里
     stm r0, {r4-r14}
 	// 返回0
 	mov r0, #0
@@ -62,7 +64,10 @@ lj:
 	// moveq r1, #1
 	addeq r1, #1
 	//ldm r1, {r1-r13, lr}
+    // r1 jmpbf数组首地址
+    // 将jmpbf的内容提取到寄存器里
     ldm r1, {r4-r14}
+    // 用sj保存的lr返回，自然是回到sj
 	mov pc, lr
 
 .global mon_stack_limit
