@@ -36,12 +36,17 @@ tz_init:
 	ldr r0, =arm_vector_table
 	mcr p15, 0, r0, c12, c0, 0
 
+    // 切换到usr模式
 	cps #Mode_USR
+    // 设置usr的栈
 	ldr sp, =moontu_usr
+    // 读取cpsr的值
 	mrs r0, cpsr
 	and r0, #0x1f
+    // 打印cpsr，查看当前模式
 	bl show_num
 
+    // usr模式“回去”svc模式
 	// call svc
 	// SWI: the addr of the following instraction will transfer svc lr
 	//swi #0
