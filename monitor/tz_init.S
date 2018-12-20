@@ -31,52 +31,20 @@ tz_init:
 
 	b .
 
-/* ----------------------- mt_schedule ----------------------- */
+/* void switch_to(void** p_sp) */
+.global switch_to
+switch_to:
+    ldr sp, [r0]
+    ldmfd sp!, {r0-r12, lr, pc}
 
-/*
- * void mt_task_init(void *task, int *task_stack, int stack_size);
- */
-.global mt_task_init
-mt_task_init:
-    // 设置栈指针
-    add sp, r1, r2
-    // 设置lr指针，有bug
-    //mov lr, r0
-
-    // 保存到栈里
-    stmfd sp, {r0-r14}
-    sub sp, sp, #4
-    str r0, [sp]
-    sub sp, sp, #52
-    mov pc, lr
-
-/*
- * void mt_schedule_start(void);
- */
-.global mt_schedule_start
-mt_schedule_start:
-    ldr r0, =task1_stack
-    ldm r0, {r0-r14}
-    mov pc, r1
-
-    mov pc, lr
-
-/* 
- * void mt_schedule(void);
- */
-.global mt_schedule
-mt_schedule:
-    // 保存lr
-
-    // 恢复task2状态，恢复对方的，目前在task1
-    //ldr r0, =task2_stack
-    //ldm r0, {r0-r14}
-    //mov pc, lr
-
-    ldmfd sp, {r0-r14}
-    add sp, sp, #56
-    mov pc, lr
-
+/* _schedule(void* sp_from, void *sp_to) */
+.global _schedule
+_schedule:
+    stmfd sp!, {lr}
+    stmfd sp!, {r0-r12, lr}
+    str sp, [r0] 
+    ldr sp, [r1]
+    ldmfd sp!, {r0-r12, lr, pc}
 
 /* ----------------------- mt_schedule ----------------------- */
 
