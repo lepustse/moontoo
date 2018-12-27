@@ -1,11 +1,11 @@
 #include "all.h"
 
-void *task1_stack[1024];
-void *task2_stack[1024];
+void *task_1_stask[1024];
+void *task_2_stask[1024];
 
-void *task1_sp;
-void *task2_sp;
-int current_id;
+void *task_1_sp;
+void *task_2_sp;
+int task_cur_id;
 
 void mt_task_init(int task_id, void (*func)(void), void **task_stack, int stack_size);
 void mt_task_start(void);
@@ -39,26 +39,27 @@ void mt_task_init(int task_id, void (*func)(void), void **task_stack, int stack_
 
     if (task_id == 1) {
         // 满减栈
-        task1_sp = p;
+        task_1_sp = p;
     } else if (task_id == 2) {
-        task2_sp = p;
+        task_2_sp = p;
     } else {
         return;
     }
 }
 
-// 切换到task1，不用回来的
 void mt_task_start(void) {
-    __sch_start(&task1_sp);
+    task_cur_id = 1;
+    __sch_start(&task_1_sp);
 }
 
 void mt_schedule(void) {
-    int current_id = 1;
 
-    if (current_id == 1) {
-        __mt_schedule(&task1_sp, &task2_sp);
-    } else {
-        __mt_schedule(&task2_sp, &task1_sp);
+    if (task_cur_id == 1) {
+        task_cur_id = 2;
+        __mt_schedule(&task_2_sp, &task_1_sp);
+    } else if (task_cur_id == 2) {
+        task_cur_id = 1;
+        __mt_schedule(&task_1_sp, &task_2_sp);
     }
 }
 
@@ -72,8 +73,8 @@ void main(void) {
 	printf("1 + 2 + ... + 100 = %d\n", sum);
 	printf("hello world!\n");
 
-    mt_task_init(1, task1, task1_stack, sizeof(task1_stack));
-    mt_task_init(2, task2, task2_stack, sizeof(task2_stack));
+    mt_task_init(1, task1, task_1_stask, sizeof(task_1_stask));
+    mt_task_init(2, task2, task_2_stask, sizeof(task_2_stask));
 
     mt_task_start();
 }
@@ -85,9 +86,7 @@ void task1(void) {
 
     while (1) {
         printf("now in task1:%d\n", ++loop);
-        // dst, src
-        // 1 -> 2
-        __mt_schedule(&task2_sp, &task1_sp);
+        mt_schedule();
     }
 }
 
@@ -98,9 +97,7 @@ void task2(void) {
 
     while (1) {
         printf("now in task2:%d\n", ++loop);
-        // dst, src
-        // 2 -> 1
-        __mt_schedule(&task1_sp, &task2_sp);
+        mt_schedule();
     }
 }
 

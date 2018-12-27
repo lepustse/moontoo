@@ -47,8 +47,11 @@ __sch_start:
 .global __mt_schedule
 __mt_schedule:
     stmfd sp!, {lr}
+    stmfd sp!, {r0-r12, lr}
     str sp, [r1]
 
+    ldr sp, [r0]
+    ldmfd sp!, {r0-r12, lr, pc}
 
 /* ------------------------- mt_sch ------------------------ */
 
