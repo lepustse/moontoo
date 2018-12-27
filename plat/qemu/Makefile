@@ -35,19 +35,26 @@ USE_COHERENT_MEM := 1
 TOP := $(shell pwd)
 OUT_DIR := $(TOP)/out
 DUMP_DIR := $(TOP)/dump
+# 保留调试信息（包含某个地址是哪个变量，在哪个文件的哪一行等等）
+CCFLAGS := -g -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
+#CCFLAGS := -g1 -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
+# 看宏
+#CCFLAGS := -g3 -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
 
-#CCFLAGS := -g -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
+# 软浮点
 #CCFLAGS := -O2 -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
-CCFLAGS := -O2 -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
-# by me
+# 硬浮点
+#CCFLAGS := -O2 -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
+# O0优化
 #CCFLAGS := -O0 -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
+
 CCFLAGS += -ffreestanding -nostdinc -isystem -pipe -marm  -mabi=aapcs-linux -std=gnu99
 CCFLAGS += -mno-thumb-interwork -Wall -Wstrict-prototypes -fno-stack-protector
 CCFLAGS += -march=$(MARCH) -D_SYS_SUPPORT_
 
-#ASFLAGS := -g -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
+ASFLAGS := -g -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
 #ASFLAGS := -Os -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
-ASFLAGS := -Os -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
+#ASFLAGS := -Os -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
 ASFLAGS += -ffreestanding -nostdinc -isystem -pipe -marm  -mabi=aapcs-linux 
 ASFLAGS += -mno-thumb-interwork -Wall 
 ASFLAGS += -march=$(MARCH)

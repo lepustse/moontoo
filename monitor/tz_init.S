@@ -31,6 +31,27 @@ tz_init:
 
 	b .
 
+/* ------------------------- mt_sch ------------------------ */
+/*
+ * void __sch_start(void **sp);
+ */
+.global __sch_start
+__sch_start:
+    ldr sp, [r0]
+    ldmfd sp!, {r0-r12, lr, pc}
+
+/*
+ * void __mt_schedule(void **dst, void **src);
+ * 保存lr，恢复lr
+ */
+.global __mt_schedule
+__mt_schedule:
+    stmfd sp!, {lr}
+    str sp, [r1]
+
+
+/* ------------------------- mt_sch ------------------------ */
+
 .global mon_stack_limit
 .bss
 .align 2   //align to  2~2=4
