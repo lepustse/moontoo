@@ -19,17 +19,46 @@ void main(void) {
 
 void funcA(void) {
     funcB();
+    //printf("now in funcA, funcB's addr: 0x%x\n", funcB);
 }
 
 void funcB(void) {
     int j = 1;
 
+    printf("now in funcB, funcA's addr: 0x%x\n", funcA);
     j++;
     funcC();
 }
 
 void funcC(void) {
-    int i = 1;
-
-    i++;
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
+    asm volatile ("dmb":::"memory");
 }
