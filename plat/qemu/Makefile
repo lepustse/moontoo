@@ -36,18 +36,18 @@ TOP := $(shell pwd)
 OUT_DIR := $(TOP)/out
 DUMP_DIR := $(TOP)/dump
 
-#CCFLAGS := -g -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
+CCFLAGS := -g -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
 #CCFLAGS := -O2 -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
-CCFLAGS := -O2 -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
+#CCFLAGS := -O2 -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
 # by me
 #CCFLAGS := -O0 -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
 CCFLAGS += -ffreestanding -nostdinc -isystem -pipe -marm  -mabi=aapcs-linux -std=gnu99
 CCFLAGS += -mno-thumb-interwork -Wall -Wstrict-prototypes -fno-stack-protector
 CCFLAGS += -march=$(MARCH) -D_SYS_SUPPORT_
 
-#ASFLAGS := -g -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
+ASFLAGS := -g -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
 #ASFLAGS := -Os -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
-ASFLAGS := -Os -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
+#ASFLAGS := -Os -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
 ASFLAGS += -ffreestanding -nostdinc -isystem -pipe -marm  -mabi=aapcs-linux 
 ASFLAGS += -mno-thumb-interwork -Wall 
 ASFLAGS += -march=$(MARCH)

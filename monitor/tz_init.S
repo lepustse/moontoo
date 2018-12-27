@@ -22,14 +22,32 @@ tz_init:
 	mov r2, #0
 1:
 	str r2, [r0], #4
-	cmp r0, r1
-	blo 1b
+	cmp r0, r1 // r0 == r1
+	blo 1b // 小于
 
 	ldr sp, =mon_stack_limit
 
 	bl main
 
 	b .
+
+/*
+ * void mt_memcpy(void *dst, const void *src, unsigned int size);
+ * 将src地址里的内容拷贝到dst
+ */
+.global mt_memcpy
+mt_memcpy:
+1:
+    cmp r2, #0
+    beq 2f
+    ldrb r3, [r1], #1 // *r1存到r3寄存器，r1 = r1 + 4
+    strb r3, [r0], #1 // r3的值写到*r0，r0 = r0 + 4
+    sub r2, r2, #1
+    cmp r2, #0
+    bne 1b
+
+2:
+    mov pc, lr
 
 .global mon_stack_limit
 .bss
