@@ -44,9 +44,10 @@ hanoi_a:
 1:
     mov r2, r1
     mov r1, r0
-    ldr r0, =count_a
-    ldr r0, [r0]
+    ldr lr, =count_a
+    ldr r0, [lr]
     add r0, r0, #1
+    str r0, [lr]
     bl move
     pop {pc}
 2:
