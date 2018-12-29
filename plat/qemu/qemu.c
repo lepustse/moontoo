@@ -1,23 +1,29 @@
 #include "all.h"
 
-void move(int count, int disks, char n, char m); 
-void hanoi(int n, char a, char b, char c);
+void move(int count_c, int n, char src, char dst);
+void hanoi_c(int n, char src, char mid, char dst);
+extern void hanoi_a(int n, char src, char mid, char dst);
+extern void madai(void (*pfunc)(int x), int i);
 
-void move(int count, int disks, char n, char m) {
-    printf("第%d次移动：把%d号圆盘从%c移到%c\n", count, disks, n, m);
+void move(int count_c, int n, char src, char dst) {
+    printf("第%d次移动：将%d号圆盘从%c移到%c\n", count_c, n, src, dst);
 }
 
-int count = 0;
+int count_c = 0;
+int count_a = 0;
 
-void hanoi(int n, char a, char b, char c) {
-
+void hanoi_c(int n, char src, char mid, char dst) {
     if (n == 1) {
-        move(++count, 1, a, c);
+        move(++count_c, 1, src, dst);
     } else {
-        hanoi(n-1, a, c, b);
-        move(++count, n, a, c);
-        hanoi(n-1, b, a, c);
+        hanoi_c(n-1, src, dst, mid);
+        move(++count_c, n, src, dst); // 第ｎ号盘，Ａ->Ｃ
+        hanoi_c(n-1, mid, src, dst);
     }
+}
+
+void func(int i) {
+    printf("麻袋试验%d\n", i);
 }
 
 void main(int argc, char *argv[]) {
@@ -30,5 +36,10 @@ void main(int argc, char *argv[]) {
 	printf("1 + 2 + ... + 100 = %d\n", sum);
 	printf("hello world!\n");
 
-    hanoi(3, 'A', 'B', 'C');
+    printf("以下是Ｃ函数：\n");
+    hanoi_c(3, 'A', 'B', 'C');
+    printf("以下是汇编函数：\n");
+    hanoi_a(3, 'A', 'B', 'C');
+
+    madai(func, 8);
 }
