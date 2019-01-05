@@ -47,6 +47,25 @@ mt_memcpy:
 2:
     mov pc, lr
 
+/*
+ * void mt_memset(void *d, int c, unsigned int size);
+ */
+.global mt_memset
+mt_memset:
+1:
+    cmp r2, #0
+    beq 2f
+    strb r1, [r0], #1
+    sub r2, r2, #1
+    b 1b
+
+2:
+    mov pc, lr
+
+/*
+ * char *mt_strcpy(char *dst, const char *src);
+ */
+
 .global mon_stack_limit
 .bss
 .align 2   //align to  2~2=4
