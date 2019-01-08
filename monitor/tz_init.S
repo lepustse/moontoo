@@ -31,6 +31,114 @@ tz_init:
 
 	b .
 
+/* void caller_printf_a(void); */
+.global caller_printf_a
+caller_printf_a:
+    push {lr}
+    // str 地址
+    ldr r0, =v4
+    ldr r0, [r0]
+    ldr r1, =v5
+    ldr r1, [r1]
+    stmfd sp!, {r0-r1}
+    
+    ldr r0, =str
+    ldr r1, =v1
+    ldr r1, [r1]
+    ldr r2, =v2
+    ldr r2, [r2]
+    ldr r3, =v3
+    ldr r3, [r3]
+
+    bl printf
+    add sp, sp, #8
+    pop {pc}
+    
+str:
+    .ascii "caller by asm: %d, %d, %d, %d, %d\n"
+.data
+// 何时需要对齐？
+.align
+v1:
+    .word 1
+v2:
+    .word 2
+v3:
+    .word 3
+v4:
+    .word 4
+v5:
+    .word 5
+
+/* uint32_t add_a(uint32_t i, ...); */
+.global add_a
+add_a:
+    push {r1-r3}
+    mov r2, #0
+1:
+    ldr r1, [sp]
+    add sp, #4
+    add r2, r1, r2
+    sub r0, #1
+    cmp r0, #0
+    bne 1b
+
+    mov r0, r2
+
+    sub sp, #20
+    pop {r1-r3}
+    mov pc, lr
+
+/* void caller_add_a(void); */
+.global caller_add_a
+caller_add_a:
+    push {lr}
+    
+    ldr r0, =a4
+    ldr r0, [r0]
+
+    ldr r1, =a5
+    ldr r1, [r1]
+
+    ldr r2, =a6
+    ldr r2, [r2]
+    stmfd sp!, {r0-r2}
+
+    mov r0, #6
+    ldr r1, =a1
+    ldr r1, [r1]
+    ldr r2, =a2
+    ldr r2, [r2]
+    ldr r3, =a3
+    ldr r3, [r3]
+
+    bl add_a
+
+    mov r1, r0
+    ldr r0, =xxx
+
+    bl printf
+
+    add sp, #12
+    pop {pc}
+xxx:
+    .ascii "求和结果：%d\n"
+.data
+.align
+a1:
+    .word 1
+a2:
+    .word 2
+a3:
+    .word 3
+a4:
+    .word 4
+a5:
+    .word 5
+a6:
+    .word 6
+
+
 .global mon_stack_limit
 .bss
 .align 2   //align to  2~2=4
