@@ -113,16 +113,17 @@ caller_add_a:
     ldr r3, [r3]
 
     bl add_a
+    // 为什么会是8？
+    add sp, #8
 
     mov r1, r0
     ldr r0, =xxx
 
     bl printf
 
-    add sp, #12
     pop {pc}
 xxx:
-    .ascii "求和结果：%d\n"
+    .ascii "caller add by asm: %d\n"
 .data
 .align
 a1:

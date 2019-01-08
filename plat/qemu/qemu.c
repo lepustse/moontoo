@@ -16,7 +16,23 @@ extern void caller_add_a(void);
 
 // 求和
 uint32_t add_c(uint32_t i, ...) {
+    va_list p;
+    uint32_t sum = 0;
+    va_start(p, i);
+    for (int j = 0; j < i; j++) {
+        sum += va_arg(p, uint32_t);
+    }
+    va_end(p);
 
+    return sum;
+}
+
+void caller_add_c(void) {
+    int buf[6];
+    for (int i = 0; i < 6; i++) {
+        buf[i] = i;
+    }
+    printf("caller add by c: %d\n", add_c(6, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]));
 }
 
 // 编译器自动
@@ -28,9 +44,6 @@ void caller_printf_c(void) {
     printf("caller by c: %d, %d, %d, %d, %d\n", buf[0], buf[1], buf[2], buf[3], buf[4]);
 }
 
-void fun(void) {
-    add_a(6, 1, 1, 1, 1, 1, 0);
-}
 void main(void) {
 	int i;
 	int sum = 0;
@@ -43,7 +56,10 @@ void main(void) {
      caller_printf_a();
      caller_printf_c();
 
-     i = add_a(6, 1, 2, 3, 4, 5, 6);
+     i = add_a(6, 0, 1, 2, 3, 4, 5);
      printf("add求和结果：%d\n", i);
+     caller_add_c();
      caller_add_a();
+
+     printf("end\n");
 }
