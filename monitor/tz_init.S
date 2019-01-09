@@ -56,20 +56,8 @@ caller_printf_a:
     
 str:
     .ascii "caller by asm: %d, %d, %d, %d, %d\n"
-.data
-// 何时需要对齐？
-.align
-v1:
-    .word 1
-v2:
-    .word 2
-v3:
-    .word 3
-v4:
-    .word 4
-v5:
-    .word 5
 
+    .align 2
 /* uint32_t add_a(uint32_t i, ...); */
 .global add_a
 add_a:
@@ -122,8 +110,21 @@ caller_add_a:
     pop {pc}
 xxx:
     .ascii "caller add by asm: %d\n"
+
 .data
-.align
+// 何时需要对齐？
+.align 2
+v1:
+    .word 1
+v2:
+    .word 2
+v3:
+    .word 3
+v4:
+    .word 4
+v5:
+    .word 5
+
 a1:
     .word 1
 a2:
