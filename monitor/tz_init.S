@@ -75,17 +75,16 @@ v5:
 add_a:
     push {r1-r3}
     mov r2, #0
+    mov r3, sp
 1:
-    ldr r1, [sp]
-    add sp, #4
-    add r2, r1, r2
-    sub r0, #1
     cmp r0, #0
-    bne 1b
-
+    beq 2f
+    sub r0, r0, #1
+    ldr r1, [r3], #4
+    add r2, r1, r2
+    b 1b
+2:
     mov r0, r2
-
-    sub sp, #20
     pop {r1-r3}
     mov pc, lr
 
@@ -102,7 +101,7 @@ caller_add_a:
 
     ldr r2, =a6
     ldr r2, [r2]
-    stmfd sp!, {r0-r2}
+    push {r0-r2}
 
     mov r0, #6
     ldr r1, =a1
@@ -113,14 +112,13 @@ caller_add_a:
     ldr r3, [r3]
 
     bl add_a
-    // 为什么会是8？
-    add sp, #8
 
     mov r1, r0
     ldr r0, =xxx
 
     bl printf
 
+    pop {r0-r2}
     pop {pc}
 xxx:
     .ascii "caller add by asm: %d\n"
