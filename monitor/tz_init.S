@@ -17,19 +17,32 @@
 tz_init:
 	//运行到这里的时候，应该是s_svc
 	//先把bss清空
-	ldr r0, =__bss_start
-	ldr r1, =__bss_end
-	mov r2, #0
+    ldr r0, =__bss_start
+    ldr r1, =__bss_end
+    mov r2, #0
 1:
-	str r2, [r0], #4
-	cmp r0, r1
-	blo 1b
+    str r2, [r0], #4
+    cmp r0, r1
+    blo 1b
 
-	ldr sp, =mon_stack_limit
+    ldr sp, =mon_stack_limit
 
-	bl main
 
-	b .
+    ldr r0, =arm_vector_table
+    mcr p15, 0, r0, c12, c0, 0
+
+    cps #Mode_IRQ
+    ldr sp, =irq_stack_limit
+
+    cps #Mode_SVC
+
+    bl main
+    b .
+
+.global irq_enable
+irq_enable:
+    bic r0, #80
+    mov pc, lr
 
 .align 5          //align to 2~5=32
 arm_vector_table:
@@ -44,7 +57,27 @@ arm_vector_table:
     ldr pc, =arm_irq_exception
     ldr pc, =arm_fiq_exception
 
+arm_reset_exception:
+    b .
+arm_undefined_inst_exception:
+    b .
+arm_swi_syscall:
+    b .
+arm_prefetch_abort_exception:
+    b .
+arm_data_abort_exception:
+    b .
 arm_irq_exception:
+    b irq_handle
+arm_fiq_exception:
+    b .
+
+.global irq_stack_limit
+.bss
+.align 2
+irq_stack:
+    .space (1 << 16)
+irq_stack_limit:
 
 .global mon_stack_limit
 .bss
