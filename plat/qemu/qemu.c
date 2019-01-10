@@ -21,6 +21,8 @@ void main(void) {
     //irq_enable();
     { 
         uint32_t cpsr;
+        // irq: 0x80
+        // fiq: 0x40
         asm volatile ("mrs %0, cpsr\n\tbic %0,#0x80\t\nmsr cpsr_cxfs, %0":"=r"(cpsr));
     }
     while (1);
@@ -34,4 +36,5 @@ void irq_handle(void) {
     cur = timer_get();
 
     printf("cur:%d\n", cur);
+    while (1);
 }

@@ -34,7 +34,13 @@ tz_init:
     cps #Mode_IRQ
     ldr sp, =irq_stack_limit
 
-    cps #Mode_SVC
+    // fiq
+    //ldr r0, =arm_vector_table
+    //mcr p15, 0, r0, c12, c0, 0
+
+    //cps #Mode_FIQ
+    //ldr sp, =fiq_stack_limit
+    //cps #Mode_SVC
 
     bl main
     b .
@@ -70,7 +76,7 @@ arm_data_abort_exception:
 arm_irq_exception:
     b irq_handle
 arm_fiq_exception:
-    b .
+    b irq_handle
 
 .global irq_stack_limit
 .bss
@@ -78,6 +84,13 @@ arm_fiq_exception:
 irq_stack:
     .space (1 << 16)
 irq_stack_limit:
+
+.global fiq_stack_limit
+.bss
+.align 2
+fiq_stack:
+    .space (1 << 16)
+fiq_stack_limit:
 
 .global mon_stack_limit
 .bss

@@ -268,7 +268,8 @@ cpu_iface_init(void)
     while (((i = gic_cpuiface->int_ack) & IRQ_MASK) != IRQ_NONE) {
         gic_cpuiface->eoi = i;
     }
-    gic_cpuiface->icontrol = 0x8|1; //0x8 is FIQEn
+    //gic_cpuiface->icontrol = 0x8|1; //0x8 is FIQEn
+    gic_cpuiface->icontrol = 0x1; // irqEn
 }
 
 /**
