@@ -31,6 +31,21 @@ tz_init:
 
 	b .
 
+.align 5          //align to 2~5=32
+arm_vector_table:
+//  the order is fixed and cannot to modify
+    ldr pc, =arm_reset_exception
+    ldr pc, =arm_undefined_inst_exception
+// !@ step 5: hardware auto
+    ldr pc, =arm_swi_syscall
+    ldr pc, =arm_prefetch_abort_exception
+    ldr pc, =arm_data_abort_exception
+    ldr pc, =arm_reset_exception
+    ldr pc, =arm_irq_exception
+    ldr pc, =arm_fiq_exception
+
+arm_irq_exception:
+
 .global mon_stack_limit
 .bss
 .align 2   //align to  2~2=4
