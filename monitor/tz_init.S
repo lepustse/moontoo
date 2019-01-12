@@ -47,7 +47,9 @@ tz_init:
 
 .global irq_enable
 irq_enable:
-    bic r0, #80
+    mrs r0, cpsr
+    bic r0, #0x80
+    msr cpsr_cxsf, r0
     mov pc, lr
 
 .align 5          //align to 2~5=32
@@ -74,7 +76,11 @@ arm_prefetch_abort_exception:
 arm_data_abort_exception:
     b .
 arm_irq_exception:
-    b irq_handle
+    sub lr, #4
+    stmfd sp!, {r0-r3, r12, lr}
+    bl irq_handle
+    ldmfd sp!, {r0-r3, r12, pc}^
+
 arm_fiq_exception:
     b irq_handle
 

@@ -4,6 +4,8 @@
 extern void timer_init(void);
 extern unsigned int timer_get(void);
 extern void irq_enable(void);
+extern void timer_clear_pending(void);
+int cnt;
 
 void main(void) {
     int i;
@@ -30,11 +32,19 @@ void main(void) {
 
 void irq_handle(void) {
     unsigned int cur;
+    interrupt_t cur_irq;
+
+    cur_irq = getActiveIRQ();
 
     printf("hello irq\n");
 
     cur = timer_get();
 
     printf("cur:%d\n", cur);
-    while (1);
+
+    if (cur_irq == 35) {
+        timer_clear_pending();
+        printf("[time init: %d]\n", ++cnt);
+    }
+    //while (1);
 }
