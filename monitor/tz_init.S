@@ -76,6 +76,7 @@ arm_prefetch_abort_exception:
 arm_data_abort_exception:
     b .
 arm_irq_exception:
+    // 流水线的缘故
     sub lr, #4
     stmfd sp!, {r0-r3, r12, lr}
     bl irq_handle

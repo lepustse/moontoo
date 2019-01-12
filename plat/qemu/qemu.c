@@ -43,8 +43,11 @@ void irq_handle(void) {
     printf("cur:%d\n", cur);
 
     if (cur_irq == 35) {
+        // !@清除定时器flag
         timer_clear_pending();
         printf("[time init: %d]\n", ++cnt);
     }
+    // !@清除gic，不关，新的中断就不会通知
+    ackInterrupt(cur_irq);
     //while (1);
 }
