@@ -36,14 +36,13 @@ tz_init:
  */
 .global mt_memcpy
 mt_memcpy:
-1:
     cmp r2, #0
     beq 2f
+1:
     ldrb r3, [r1], #1
     strb r3, [r0], #1
-    sub r2, r2, #1
-    b 1b
-
+    subs r2, r2, #1
+    bne 1b
 2:
     mov pc, lr
 
@@ -52,19 +51,33 @@ mt_memcpy:
  */
 .global mt_memset
 mt_memset:
-1:
     cmp r2, #0
     beq 2f
+1:
     strb r1, [r0], #1
-    sub r2, r2, #1
-    b 1b
-
+    subs r2, r2, #1
+    bne 1b
 2:
     mov pc, lr
 
 /*
  * char *mt_strcpy(char *dst, const char *src);
  */
+
+/* unsigned int mt_strlen(const char *s); */
+.global mt_strlen
+mt_strlen:
+    mov r1, r0
+    mov r3, r0
+1:
+    ldrb r2, [r1], #1
+    cmp r2, #0
+    beq 2f
+    b 1b
+2:
+    sub r0, r1, r3
+    sub r0, #1
+    mov pc, lr
 
 .global mon_stack_limit
 .bss

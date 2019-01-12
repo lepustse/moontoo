@@ -36,8 +36,8 @@ TOP := $(shell pwd)
 OUT_DIR := $(TOP)/out
 DUMP_DIR := $(TOP)/dump
 
-CCFLAGS := -g -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
-#CCFLAGS := -O2 -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
+#CCFLAGS := -g -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
+CCFLAGS := -O2 -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
 #CCFLAGS := -O2 -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
 # by me
 #CCFLAGS := -O0 -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
