@@ -8,6 +8,9 @@ extern void timer_clear_pending(void);
 int cnt;
 
 /* 串口 */
+extern void uart0_init(void);
+extern void uart0_clear_tx_pending(void);
+extern void uart0_clear_rx_pending(void);
 extern void uart1_init(void);
 extern void uart1_clear_tx_pending(void);
 extern void uart1_clear_rx_pending(void);
@@ -29,8 +32,8 @@ void main(void) {
     timer_init();
     maskInterrupt(0, 35);
 
-    uart1_init();
-    maskInterrupt(0, 38);
+    uart0_init();
+    maskInterrupt(0, 37);
 
     // 也可以调用汇编使能中断
     //irq_enable();
@@ -67,11 +70,11 @@ void irq_handle(void) {
     //ackInterrupt(cur_irq);
     //while (1);
 
-    if (cur_irq == 38) {
+    if (cur_irq == 37) {
         //uart1_clear_rx_pending();
         //uart1_clear_tx_pending();
         printf("uart1 中断\n");
-        printf("不知道接收到啥%c\n", readl((void *)0x1000a000));
+        printf("不知道接收到啥%c\n", readl((void *)0x10009000));
     }
 
     ackInterrupt(cur_irq);
