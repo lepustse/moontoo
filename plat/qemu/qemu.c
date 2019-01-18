@@ -18,6 +18,14 @@ extern void writel(unsigned int v, volatile void *addr);
 extern unsigned int readl(volatile void *addr);
 int u;
 
+typedef void (*mt_isr_handle_t)(void);
+mt_isr_handle_t mt_isr_table[100];
+
+void timer_irq(void);
+void uart_irq(void);
+
+void mt_irq_install(int vector, void (*handler)(void), void *param);
+
 void main(void) {
     int i;
     int sum = 0;
@@ -35,6 +43,9 @@ void main(void) {
     uart0_init();
     maskInterrupt(0, 37);
 
+    mt_irq_install(35, timer_irq, NULL);
+    mt_irq_install(37, uart_irq, NULL);
+
     // 也可以调用汇编使能中断
     //irq_enable();
     { 
@@ -43,9 +54,21 @@ void main(void) {
         // fiq: 0x40
         asm volatile ("mrs %0, cpsr\n\tbic %0,#0x80\t\nmsr cpsr_cxfs, %0":"=r"(cpsr));
     }
-    while (1) {
-        //writel(99, (void *)0x10009000);
-    }
+    while (1);
+}
+
+void mt_irq_install(int vector, void (*handler)(void), void *param) {
+    mt_isr_table[vector] = handler;
+}
+
+void timer_irq(void) {
+    timer_clear_pending();
+    printf("[time init: %d]\n", ++cnt);
+}
+
+void uart_irq(void) {
+    printf("uart1 中断\n");
+    printf("不知道接收到啥%c\n", readl((void *)0x10009000));
 }
 
 void irq_handle(void) {
@@ -60,22 +83,8 @@ void irq_handle(void) {
 
     printf("cur:%d\n", cur);
 
-    if (cur_irq == 35) {
-        // !@清除定时器flag
-        timer_clear_pending();
-        printf("[time init: %d]\n", ++cnt);
-        //writel(99, (void *)0x1000a000);
-    }
-    // !@清除gic，不关，新的中断就不会通知
-    //ackInterrupt(cur_irq);
-    //while (1);
-
-    if (cur_irq == 37) {
-        //uart1_clear_rx_pending();
-        //uart1_clear_tx_pending();
-        printf("uart1 中断\n");
-        printf("不知道接收到啥%c\n", readl((void *)0x10009000));
-    }
+    if (mt_isr_table[cur_irq])
+        mt_isr_table[cur_irq]();
 
     ackInterrupt(cur_irq);
 }
