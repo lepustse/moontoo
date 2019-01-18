@@ -27,6 +27,13 @@ tz_init:
 
 	ldr sp, =mon_stack_limit
 
+     ldr r1, =var
+     // 读
+     ldr r0, [r1]
+     mov r0, #3
+     // 写
+     str r0, [r1]
+
 	bl main
 
 	b .
