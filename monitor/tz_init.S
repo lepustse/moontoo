@@ -38,6 +38,7 @@ tz_init:
 .global __sch_start
 __sch_start:
     ldr sp, [r0]
+    // 拿到栈指针，将初始化的内容弹出来，制造一个假的context
     ldmfd sp!, {r0-r12, lr, pc}
 
 /*

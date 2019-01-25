@@ -16,13 +16,14 @@ void mt_schedule(void);
 
 void task1(void);
 void task2(void);
+void abc(void);
 
 void mt_task_init(int task_id, void (*func)(void), void **task_stack, int stack_size) {
     void **p = task_stack + stack_size / 4;
 
     // 满减操作
-    *--p = (void *)func;
-    *--p = (void *)0xe; // lr
+    *--p = (void *)func;// pc r15
+    *--p = (void *)0xe; // lr r14
     *--p = (void *)0xc; // r12
     *--p = (void *)0xb; // r11
     *--p = (void *)0xa; // r10
@@ -90,6 +91,13 @@ void task1(void) {
     }
 }
 
+void abc(void) {
+    printf("now in abc\n");
+    printf("sch之前的\n");
+    mt_schedule();
+    printf("sch之后的\n");
+}
+
 void task2(void) {
     int loop = 0;
 
@@ -97,7 +105,8 @@ void task2(void) {
 
     while (1) {
         printf("now in task2:%d\n", ++loop);
-        mt_schedule();
+        //mt_schedule();
+        abc();
     }
 }
 
