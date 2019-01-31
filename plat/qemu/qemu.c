@@ -71,6 +71,7 @@ void uart_irq(void) {
     printf("不知道接收到啥%c\n", readl((void *)0x10009000));
 }
 
+// rtt里就是rt_hw_trap_irq()
 void irq_handle(void) {
     unsigned int cur;
     interrupt_t cur_irq;
