@@ -89,7 +89,7 @@ CCFLAGS += -I$(SRC_DIR)/include
 
 # PLAT
 SRC_DIR := $(TOP)/plat/$(PLAT)
-SOBJ := qemu_uart.o qemu.o
+SOBJ := qemu_uart.o qemu.o gic_pl400.o timer.o	
 PSOBJ += $(addprefix $(OUT_DIR)/, $(SOBJ))
 VPATH += $(SRC_DIR)
 CCFLAGS += -I$(SRC_DIR)/include
