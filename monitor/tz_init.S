@@ -7,7 +7,7 @@
 #define  Mode_UDF       0x1B
 #define  Mode_SYS       0x1F
 
-#define A_Bit        0x100 
+#define A_Bit        0x100
 #define I_Bit        0x80 @; when I bit is set, IRQ is disabled
 #define F_Bit        0x40 @; when F bit is set, FIQ is disabled
 #define T_Bit        0x20
@@ -26,7 +26,6 @@ tz_init:
     blo 1b
 
     ldr sp, =mon_stack_limit
-
 
     ldr r0, =arm_vector_table
     mcr p15, 0, r0, c12, c0, 0
