@@ -7,7 +7,7 @@
 #define  Mode_UDF       0x1B
 #define  Mode_SYS       0x1F
 
-#define A_Bit        0x100 
+#define A_Bit        0x100
 #define I_Bit        0x80 @; when I bit is set, IRQ is disabled
 #define F_Bit        0x40 @; when F bit is set, FIQ is disabled
 #define T_Bit        0x20
@@ -23,7 +23,7 @@ tz_init:
 1:
 	str r2, [r0], #4
 	cmp r0, r1
-	blo 1b
+	blo 1b // end不属于bss了
 
 	ldr sp, =mon_stack_limit
 
@@ -41,7 +41,7 @@ caller_printf_a:
     ldr r1, =v5
     ldr r1, [r1]
     stmfd sp!, {r0-r1}
-    
+
     ldr r0, =str
     ldr r1, =v1
     ldr r1, [r1]
@@ -53,7 +53,7 @@ caller_printf_a:
     bl printf
     add sp, sp, #8
     pop {pc}
-    
+
 str:
     .ascii "caller by asm: %d, %d, %d, %d, %d\n"
 
@@ -80,7 +80,7 @@ add_a:
 .global caller_add_a
 caller_add_a:
     push {lr}
-    
+
     ldr r0, =a4
     ldr r0, [r0]
 
