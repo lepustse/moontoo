@@ -11,7 +11,7 @@ export PLAT := qemu
 ifeq ($(VFLAG), 0)
 V := @
 else
-V := 
+V :=
 endif
 export DELETE := rm -f
 export RMDIR  := rm -rf
@@ -21,7 +21,7 @@ export DEBUG  := -g
 export CCPREFIX := arm-none-eabi-
 
 export CC := $(CCPREFIX)gcc
-export AR := $(CCPREFIX)ar 
+export AR := $(CCPREFIX)ar
 export LD := $(CCPREFIX)ld
 export CP := ${CCPREFIX}objcopy
 export DP := ${CCPREFIX}objdump
@@ -36,16 +36,16 @@ TOP := $(shell pwd)
 OUT_DIR := $(TOP)/out
 DUMP_DIR := $(TOP)/dump
 
-#CCFLAGS := -O0 -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
-CCFLAGS := -g -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
+CCFLAGS := -O3 -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
+#CCFLAGS := -g -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
 CCFLAGS += -ffreestanding -nostdinc -isystem -pipe -marm  -mabi=aapcs-linux -std=gnu99
 CCFLAGS += -mno-thumb-interwork -Wall -Wstrict-prototypes -fno-stack-protector
 CCFLAGS += -march=$(MARCH) -D_SYS_SUPPORT_
 
 ASFLAGS := -g -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
 #ASFLAGS := -Os -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
-ASFLAGS += -ffreestanding -nostdinc -isystem -pipe -marm  -mabi=aapcs-linux 
-ASFLAGS += -mno-thumb-interwork -Wall 
+ASFLAGS += -ffreestanding -nostdinc -isystem -pipe -marm  -mabi=aapcs-linux
+ASFLAGS += -mno-thumb-interwork -Wall
 ASFLAGS += -march=$(MARCH)
 ASFLAGS += -D__KERNEL__ -D__ASSEMBLY__ -D__ARM__ -DCONFIG_ARM
 
@@ -116,7 +116,7 @@ all:$(TARGET) $(DUMP_DIR)
 
 $(DUMP_DIR):
 	$(V)mkdir -p $@
-	
+
 $(TARGET):$(OUT_DIR) $(SHARE_LIB) $(POBJ) $(PSOBJ) $(TOP)/plat/$(PLAT)/link.ld Makefile
 	$(if $(V), $(V)echo " (LD) $@")
 	$(V)$(CC) -nostdlib -T $(TOP)/plat/$(PLAT)/link.ld -o $@ $(POBJ) $(PSOBJ) $(SHARE_LIB) -lgcc
@@ -139,19 +139,19 @@ $(OUT_DIR)/%.dep:%.S
 	$(if $(V), @echo " (as-dep)    $(subst $(OUT_DIR)/,,$@)")
 	$(V)echo -n `dirname $@`/ > $@
 	$(V)$(CC) $(ASFLAGS) -I`dirname $<` -MM $< >> $@
-		
+
 $(OUT_DIR)/%.o:%.c
 	$(if $(V), @echo " (cc)    $(subst $(OUT_DIR)/,,$@)")
 	$(V)$(CC) $(CCFLAGS) -c $< -o $@
-	
+
 $(OUT_DIR)/%.o:%.S
 	$(if $(V), @echo " (as)    $(subst $(OUT_DIR)/,,$@)")
 	$(V)$(CC) $(ASFLAGS) -c $< -o $@
-	
+
 $(OUT_DIR):
 	$(if $(V), $(V)echo "$(MKDIR) $@")
 	-$(V)$(MKDIR) $@
-				
+
 clean:
 	-$(RMDIR) $(OUT_DIR)
 	-$(RMDIR) $(DUMP_DIR)
