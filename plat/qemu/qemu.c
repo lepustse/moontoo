@@ -53,15 +53,13 @@ void repeat_sec(void) {
     }
 }
 
-uint8_t a[4] = {1, 2, 3, 4};
-void func(uint8_t *buf, uint8_t len) {
-    if (len < 1) {
-        printf("\n");
-        return;
-    }
-    else {
-        printf("%d", *buf);
-        return func(buf + 1, len - 1);
+void func(uint8_t n) {
+    uint8_t i, j;
+
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 2; j++) {
+            func(i);
+        }
     }
 }
 
@@ -88,6 +86,6 @@ void main(void) {
     pointer_1();
     repeat();
     repeat_sec();
-    func(a, 4);
     hanoi(3, 'A', 'B', 'C');
+    func(3);
 }
