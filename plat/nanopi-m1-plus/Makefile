@@ -1,3 +1,18 @@
+#*****************************************************************************
+#                Watchdata Platform Development Center
+#                       Watchdata Confidential
+#            Copyright (c) Watchdata System CO., Ltd. 2013 -
+#                        All Rights Reserved
+#                       http://www.watchdata.com
+#*****************************************************************************
+#
+# Create Date:
+#
+# Modify Record:
+#     <author>      <date>           <version>     <desc>
+#-----------------------------------------------------------------------------
+#	   dengping.niu  2013/11/25        1.0		    Create the file.
+#-----------------------------------------------------------------------------
 ###############################################################################
 # 配置项
 ###############################################################################
@@ -6,22 +21,22 @@ export TARGET := start.elf
 export VFLAG := 0
 
 # PLAT
-export PLAT := qemu
+export PLAT := nanopi-m1-plus
 
 ifeq ($(VFLAG), 0)
 V := @
 else
-V := 
+V :=
 endif
 export DELETE := rm -f
 export RMDIR  := rm -rf
 export MKDIR  := mkdir
 export DEBUG  := -g
 
-export CCPREFIX := arm-none-eabi-
+export CCPREFIX := /usr/bin/arm-none-eabi-
 
 export CC := $(CCPREFIX)gcc
-export AR := $(CCPREFIX)ar 
+export AR := $(CCPREFIX)ar
 export LD := $(CCPREFIX)ld
 export CP := ${CCPREFIX}objcopy
 export DP := ${CCPREFIX}objdump
@@ -36,6 +51,8 @@ TOP := $(shell pwd)
 OUT_DIR := $(TOP)/out
 DUMP_DIR := $(TOP)/dump
 
+#CCFLAGS := -g -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
+#CCFLAGS := -O2 -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
 CCFLAGS := -O2 -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
 CCFLAGS += -ffreestanding -nostdinc -isystem -pipe -marm  -mabi=aapcs-linux -std=gnu99
 CCFLAGS += -mno-thumb-interwork -Wall -Wstrict-prototypes -fno-stack-protector
@@ -44,8 +61,8 @@ CCFLAGS += -march=$(MARCH) -D_SYS_SUPPORT_
 #ASFLAGS := -g -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
 #ASFLAGS := -Os -fno-strict-aliasing -fno-common -msoft-float -fno-builtin
 ASFLAGS := -Os -fno-strict-aliasing -fno-common -mfpu=vfpv3 -fno-builtin
-ASFLAGS += -ffreestanding -nostdinc -isystem -pipe -marm  -mabi=aapcs-linux 
-ASFLAGS += -mno-thumb-interwork -Wall 
+ASFLAGS += -ffreestanding -nostdinc -isystem -pipe -marm  -mabi=aapcs-linux
+ASFLAGS += -mno-thumb-interwork -Wall
 ASFLAGS += -march=$(MARCH)
 ASFLAGS += -D__KERNEL__ -D__ASSEMBLY__ -D__ARM__ -DCONFIG_ARM
 
@@ -91,7 +108,9 @@ CCFLAGS += -I$(SRC_DIR)/include
 
 # PLAT
 SRC_DIR := $(TOP)/plat/$(PLAT)
-SOBJ := qemu_uart.o qemu.o gic_pl400.o timer.o	
+SOBJ := nanopi-m1-plus.o nanopi-m1-plus_uart.o
+SOBJ += gic_pl400.o
+SOBJ += timer.o
 PSOBJ += $(addprefix $(OUT_DIR)/, $(SOBJ))
 VPATH += $(SRC_DIR)
 CCFLAGS += -I$(SRC_DIR)/include
@@ -107,6 +126,8 @@ ASFLAGS += -I$(SRC_DIR)/include
 ##############################################################################
 .PHONY: all
 all:$(TARGET) $(DUMP_DIR)
+	$(V)echo " (gen) $(TARGET).bin"
+	$(V)$(CP) -O binary $(TARGET) $(TARGET).bin
 	$(V)echo " (gen) $(TARGET).dump"
 	$(V)$(DP) -d $(TARGET) >$(DUMP_DIR)/$(TARGET).dump
 	$(V)echo " (gen) $(TARGET).sym"
@@ -116,7 +137,7 @@ all:$(TARGET) $(DUMP_DIR)
 
 $(DUMP_DIR):
 	$(V)mkdir -p $@
-	
+
 $(TARGET):$(OUT_DIR) $(SHARE_LIB) $(POBJ) $(PSOBJ) $(TOP)/plat/$(PLAT)/link.ld Makefile
 	$(if $(V), $(V)echo " (LD) $@")
 	$(V)$(CC) -nostdlib -T $(TOP)/plat/$(PLAT)/link.ld -o $@ $(POBJ) $(PSOBJ) $(SHARE_LIB) -lgcc
@@ -139,20 +160,20 @@ $(OUT_DIR)/%.dep:%.S
 	$(if $(V), @echo " (as-dep)    $(subst $(OUT_DIR)/,,$@)")
 	$(V)echo -n `dirname $@`/ > $@
 	$(V)$(CC) $(ASFLAGS) -I`dirname $<` -MM $< >> $@
-		
+
 $(OUT_DIR)/%.o:%.c
 	$(if $(V), @echo " (cc)    $(subst $(OUT_DIR)/,,$@)")
 	$(V)$(CC) $(CCFLAGS) -c $< -o $@
-	
+
 $(OUT_DIR)/%.o:%.S
 	$(if $(V), @echo " (as)    $(subst $(OUT_DIR)/,,$@)")
 	$(V)$(CC) $(ASFLAGS) -c $< -o $@
-	
+
 $(OUT_DIR):
 	$(if $(V), $(V)echo "$(MKDIR) $@")
 	-$(V)$(MKDIR) $@
-				
+
 clean:
 	-$(RMDIR) $(OUT_DIR)
 	-$(RMDIR) $(DUMP_DIR)
-	-${DELETE} ${TARGET}
+	-${DELETE} ${TARGET} ${TARGET}.bin

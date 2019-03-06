@@ -1,1 +1,1 @@
-plat/qemu/Makefile
+plat/nanopi-m1-plus/Makefile

@@ -8,8 +8,8 @@
  * @TAG(GD_GPL)
  */
 
-#define GIC_PL400_DISTRIBUTOR_PPTR  0x1E001000
-#define GIC_PL400_CONTROLLER_PPTR   0x1E000100
+#define GIC_PL400_DISTRIBUTOR_PPTR  0x01c81000
+#define GIC_PL400_CONTROLLER_PPTR   0x01c82000
 
 #include "gic_pl400.h"
 
@@ -232,11 +232,11 @@ dist_init(void)
 
     /* level-triggered, 1-N */
     for (i = 64; i < nirqs; i += 32) {
-        gic_dist->config[i / 32] = 0x55555555;
+        gic_dist->config[i / 32] = 0; //0x55555555;
     }
-    /* configure to group 0 for security */
+    /* configure to group 1 for none-security */
     for (i = 0; i < nirqs; i += 32) {
-        gic_dist->group[i / 32] = 0x0;
+        gic_dist->group[i / 32] = 0;
     }
     /* enable the int controller */
     gic_dist->enable = 1;
@@ -245,7 +245,7 @@ dist_init(void)
 /**
    DONT_TRANSLATE
  */
-BOOT_CODE static void
+BOOT_CODE void
 cpu_iface_init(void)
 {
     uint32_t i;
@@ -269,7 +269,7 @@ cpu_iface_init(void)
         gic_cpuiface->eoi = i;
     }
     //gic_cpuiface->icontrol = 0x8|1; //0x8 is FIQEn
-    gic_cpuiface->icontrol = 0x1; // irqEn
+    gic_cpuiface->icontrol = 1;
 }
 
 /**
@@ -291,7 +291,10 @@ initIRQController(void)
  * reads will not return the same value For this reason, we have a
  * global variable to store the IRQ number.
  */
-static uint32_t active_irq = IRQ_NONE;
+static uint32_t active_irq[8] = {IRQ_NONE, IRQ_NONE, \
+    IRQ_NONE, IRQ_NONE, \
+    IRQ_NONE, IRQ_NONE,
+    IRQ_NONE, IRQ_NONE};
 
 /**
    DONT_TRANSLATE
@@ -299,18 +302,29 @@ static uint32_t active_irq = IRQ_NONE;
 interrupt_t
 getActiveIRQ(void)
 {
-    uint32_t irq;
-    if (!IS_IRQ_VALID(active_irq)) {
-        active_irq = gic_cpuiface->int_ack;
+	uint32_t irq;
+    uint32_t *p_active_irq;
+    uint32_t cpu_id;
+
+    __asm__ volatile (
+            "mrc p15, 0, %0, c0, c0, 5"
+            :"=r"(cpu_id)
+            );
+    cpu_id &= 0xf;
+    p_active_irq = active_irq + cpu_id;
+
+    if (!IS_IRQ_VALID(*p_active_irq)) {
+        *p_active_irq = gic_cpuiface->int_ack;
     }
 
-    if (IS_IRQ_VALID(active_irq)) {
-        irq = active_irq & IRQ_MASK;
+    if (IS_IRQ_VALID(*p_active_irq)) {
+        irq = *p_active_irq & IRQ_MASK;
     } else {
         irq = irqInvalid;
     }
 
     return irq;
+
 }
 
 /*
@@ -347,17 +361,50 @@ maskInterrupt(bool_t disable, interrupt_t irq)
 void
 ackInterrupt(irq_t irq)
 {
-    if (!(IS_IRQ_VALID(active_irq) && (active_irq & IRQ_MASK) == irq)) {
-		return;
-	}
+    uint32_t *p_active_irq;
+    uint32_t cpu_id;
+
+    __asm__ volatile (
+            "mrc p15, 0, %0, c0, c0, 5"
+            :"=r"(cpu_id)
+            );
+    cpu_id &= 0xf;
+    p_active_irq = active_irq + cpu_id;
+
+    if (!(IS_IRQ_VALID(*p_active_irq) && (*p_active_irq & IRQ_MASK) == irq)) {
+        return;
+    }
     if (is_irq_edge_triggered(irq)) {
         dist_pending_clr(irq);
     }
-    gic_cpuiface->eoi = active_irq;
-    active_irq = IRQ_NONE;
+    gic_cpuiface->eoi = *p_active_irq;
+    *p_active_irq = IRQ_NONE;
 }
 
 void
 handleSpuriousIRQ(void)
 {
 }
+
+void dist_ipi_send(irq_t irq, int cpu)
+{
+    if (irq >= 16 || cpu >= 8) {
+        return;
+    }
+    gic_dist->sgi_control = ((1 << cpu) << 16) | irq;
+}
+
+void set_irq_target(irq_t irq, int cpu)
+{
+    uint32_t origin;
+    uint32_t off;
+    uint32_t mask = 0xff;
+    origin = gic_dist->targets[irq / 4];
+    off = irq & 0x3;
+    mask <<= (off << 3);
+    origin &= ~mask;
+    origin |= ((1 << cpu) << (off << 3));
+    gic_dist->targets[irq / 4] = origin;
+    __asm__ volatile ("dsb":::"memory");
+}
+

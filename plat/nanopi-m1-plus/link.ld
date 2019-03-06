@@ -5,7 +5,7 @@ ENTRY(tz_init)
 
 SECTIONS
 {
-	. = 0x60008000;
+	. = 0x40000000;
 	. = ALIGN(4);
 	_SYS_CODE_START = .;
 	.text : {
