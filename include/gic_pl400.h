@@ -4,7 +4,7 @@
 
 #include <stdint.h>
 
-#define BOOT_CODE 
+#define BOOT_CODE
 
 typedef uint16_t interrupt_t;
 typedef uint16_t irq_t;

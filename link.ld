@@ -1,0 +1,1 @@
+plat/nanopi_m1_plus/link.ld
