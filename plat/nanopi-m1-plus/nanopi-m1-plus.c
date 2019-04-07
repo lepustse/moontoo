@@ -116,7 +116,7 @@ static inline void __raw_spin_lock(raw_spinlock_t *lock)
 			"   add %1, %0, %4\n"
 			"   strex   %2, %1, [%3]\n"
 			"   teq %2, #0\n"
-			"   bne 1b"
+			"   bne 1b" // 这一句表明内存写失败
 			: "=&r" (lockval), "=&r" (newval), "=&r" (tmp)
 			: "r" (&lock->slock), "I" (1 << 16)
 			: "cc");
@@ -186,7 +186,8 @@ void main(void) {
 			__raw_spin_unlock(&share_lock);
 		}
 		__raw_spin_lock(&share_lock);
-		printf("cpu0: share_var is %d, cnt_cpu0[%d] + cnt_cpu1[%d] = [%d]\n", share_var, cnt_cpu0, cnt_cpu1, cnt_cpu0 + cnt_cpu1);
+		printf("cpu0: share_var is %d, cnt_cpu0[%d] + cnt_cpu1[%d] = [%d]\n", \
+                share_var, cnt_cpu0, cnt_cpu1, cnt_cpu0 + cnt_cpu1);
 		__raw_spin_unlock(&share_lock);
 #endif
 	}
@@ -250,7 +251,8 @@ void second_cpu_c_start(void)
 			__raw_spin_unlock(&share_lock);
 		}
 		__raw_spin_lock(&share_lock);
-		printf("cpu1: share_var is %d, cnt_cpu0[%d] + cnt_cpu1[%d] = [%d]\n", share_var, cnt_cpu0, cnt_cpu1, cnt_cpu0 + cnt_cpu1);
+		printf("cpu1: share_var is %d, cnt_cpu0[%d] + cnt_cpu1[%d] = [%d]\n", \
+                share_var, cnt_cpu0, cnt_cpu1, cnt_cpu0 + cnt_cpu1);
 		__raw_spin_unlock(&share_lock);
 #endif
     }

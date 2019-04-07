@@ -7,7 +7,7 @@
 
 struct NS16550 {
     UART_REG(rbr);      /* 0 */
-    UART_REG(ier);      /* 1 */
+    UART_REG(ier);      /* 1 */ // interrupt enable
     UART_REG(fcr);      /* 2 */
     UART_REG(lcr);      /* 3 */
     UART_REG(mcr);      /* 4 */
@@ -32,7 +32,7 @@ struct NS16550 {
 #define UART_IER_PTIME 0x80
 #define UART_IER_ELSI  0x4
 #define UART_IER_ETBEI 0x2
-#define UART_IER_ERBFI 0x1
+#define UART_IER_ERBFI 0x1 // enable received data available interrupt
 
 typedef struct NS16550 *NS16550_t;
 
