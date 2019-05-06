@@ -26,9 +26,20 @@ void uart_irq(void);
 
 void mt_irq_install(int vector, void (*handler)(void), void *param);
 
+extern int tuzi_export_start;
+extern int tuzi_export_end;
+typedef void (*export_fn)(void);
+
 void main(void) {
     int i;
     int sum = 0;
+    export_fn *pfn;
+
+    for (pfn = (export_fn*)&tuzi_export_start;
+            pfn < (export_fn*)&tuzi_export_end;
+            pfn++) {
+        (*pfn)();
+    }
 
     for (i = 1; i <= 100; i++) {
         sum += i;
@@ -89,3 +100,17 @@ void irq_handle(void) {
 
     ackInterrupt(cur_irq);
 }
+
+#define TUZI_INIT_EXPORT(fn) void (*fn##_export)(void)  __attribute__((section("tuzi_export"))) = fn
+
+void t1(void)
+{
+    printf("t1\n");
+}
+TUZI_INIT_EXPORT(t1);
+
+void t2(void)
+{
+    printf("t2\n");
+}
+TUZI_INIT_EXPORT(t2);

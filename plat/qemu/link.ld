@@ -16,6 +16,10 @@ SECTIONS
 	. = ALIGN(4);
 	.data : { 
 		*(.data)
+		. = ALIGN(4);
+		tuzi_export_start = .;
+		KEEP(*(tuzi_export))
+		tuzi_export_end = .;
 	}
 	__bss_start = .;
 	.bss : { 
