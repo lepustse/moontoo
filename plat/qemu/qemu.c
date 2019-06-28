@@ -84,7 +84,7 @@ static inline int mt_list_isempty(mt_list_t *l) {
 /* ----------------------- moontu list end ----------------------- */
 
 struct object;
-typedef void (*ds_t)(struct object *pobject);
+typedef void (*ds_t)(struct object *pobj);
 
 struct object {
 	ds_t display_human;
@@ -108,9 +108,9 @@ struct worker {
 	struct object wok;
 };
 
-void sch_tea_display(struct object *pobject);
-void sch_stu_display(struct object *pobject);
-void sch_wok_display(struct object *pobject);
+void sch_tea_display(struct object *pobj);
+void sch_stu_display(struct object *pobj);
+void sch_wok_display(struct object *pobj);
 
 struct teacher t_a;
 struct teacher t_b;
@@ -121,6 +121,24 @@ struct student s_b;
 struct worker w_a;
 
 mt_list_t head;
+
+// 把所有老师学生都打出来
+// 老师只打印名字，学生打名字和学号
+// teacher: tuzi
+// student: never, num: 1
+// 这是框架函数，不需要被外部调用
+static void sch_display_human(mt_list_t *h) {
+	struct object *pobj;
+	mt_list_t *ptmp;
+
+	mt_list_for_each(ptmp, h) {
+		pobj = mt_list_entry(ptmp, struct object, l);
+		// 这是bug，初始化里定义display_human，但从头到尾没有使用，而是用了传参的方法调用专用打印函数
+		//display_human(pobj);
+		// 这才叫使用定义了的函数指针
+		pobj->display_human(pobj);
+	}
+}
 
 // 不要用malloc和free，用几个全局变量就行了
 void sch_tea_init(struct teacher *ptea, char *name) {
@@ -161,42 +179,24 @@ void sch_wok_insert(mt_list_t *h, struct worker *pwok) {
 	mt_list_insert_after(h, &pwok->wok.l);
 }
 
-// 把所有老师学生都打出来
-// 老师只打印名字，学生打名字和学号
-// teacher: tuzi
-// student: never, num: 1
-// 这是框架函数，不需要被外部调用
-static void sch_display_human(mt_list_t *h) {
-	struct object *pobject;
-	mt_list_t *ptmp;
-
-	mt_list_for_each(ptmp, h) {
-		pobject = mt_list_entry(ptmp, struct object, l);
-		// 这是bug，初始化里定义display_human，但从头到尾没有使用，而是用了传参的方法调用专用打印函数
-		//display_human(pobject);
-		// 这才叫使用定义了的函数指针
-		pobject->display_human(pobject);
-	}
-}
-
-void sch_tea_display(struct object *pobject) {
+void sch_tea_display(struct object *pobj) {
 	struct teacher *p;
 
-	p = mt_list_entry(pobject, struct teacher, tea);
+	p = mt_list_entry(pobj, struct teacher, tea);
 	printf("teacher: %s\n", p->name);
 }
 
-void sch_stu_display(struct object *pobject) {
+void sch_stu_display(struct object *pobj) {
 	struct student *p;
 
-	p = mt_list_entry(pobject, struct student, stu);
+	p = mt_list_entry(pobj, struct student, stu);
 	printf("student: %s, num: %d\n", p->name, p->num);
 }
 
-void sch_wok_display(struct object *pobject) {
+void sch_wok_display(struct object *pobj) {
 	struct worker *p;
 
-	p = mt_list_entry(pobject, struct worker, wok);
+	p = mt_list_entry(pobj, struct worker, wok);
 	printf("worker: %s\n", p->name);
 }
 
