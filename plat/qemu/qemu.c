@@ -62,8 +62,8 @@ static inline int mt_list_isempty(mt_list_t *l) {
 	return l->next == l;
 }
 // 得到用户结构体指针
-#define mt_list_entry(node, type, member) \
-	mt_container_of(node, type, member)
+#define mt_list_entry(node, object, member) \
+	mt_container_of(node, object, member)
 
 // 向前遍历链表
 #define mt_list_for_each(pos, head) \
@@ -74,128 +74,129 @@ static inline int mt_list_isempty(mt_list_t *l) {
 	for (pos = (head)->prev; pos != (head); pos = pos->prev)
 
 // 得到链表的第一个成员
-#define mt_list_first_entry(ptr, type, member) \
-	mt_list_entry((ptr)->next, type, member)
+#define mt_list_first_entry(ptr, object, member) \
+	mt_list_entry((ptr)->next, object, member)
 
 // 得到链表最后一个成员
-#define mt_list_last_entry(ptr, type, member) \
-	mt_list_entry((ptr)->prev, type, member)
+#define mt_list_last_entry(ptr, object, member) \
+	mt_list_entry((ptr)->prev, object, member)
 
 /* ----------------------- moontu list end ----------------------- */
 
-struct type;
-typedef void (*ds_t)(struct type *ptype);
+struct object;
+typedef void (*ds_t)(struct object *pobject);
 
-struct type {
-	ds_t disp_me;
+struct object {
+	ds_t display_human;
 	mt_list_t l;
 };
 
-struct stu {
+struct student {
 	char *name;
 	int num;
-	struct type stu_t;
+	struct object stu;
 };
 
-struct tea {
+struct teacher {
 	// todo: 后面要把char* 改为数组
 	char *name;
-	struct type tea_t;
+	struct object tea;
 };
 
-struct wok {
+struct worker {
 	char *name;
-	struct type wok_t;
+	struct object wok;
 };
 
-void sch_tea_display(struct type *ptype);
-void sch_stu_display(struct type *ptype);
-void sch_wok_display(struct type *ptype);
+void sch_tea_display(struct object *pobject);
+void sch_stu_display(struct object *pobject);
+void sch_wok_display(struct object *pobject);
 
-struct tea t_a;
-struct tea t_b;
+struct teacher t_a;
+struct teacher t_b;
 
-struct stu s_a;
-struct stu s_b;
+struct student s_a;
+struct student s_b;
 
-struct wok w_a;
+struct worker w_a;
 
 mt_list_t head;
 
 // 不要用malloc和free，用几个全局变量就行了
-void sch_tea_init(struct tea *ptea, char *name) {
+void sch_tea_init(struct teacher *ptea, char *name) {
 	// 这是个潜藏的bug，""的地址是在read only的，全局变量
 	// 如果是局部变量，就会崩溃了
 	// todo: 后面要用memcpy处理
 	ptea->name = name;
 
-	//ptea->tea_t.h_type = 1;
-	ptea->tea_t.disp_me = sch_tea_display;
-	mt_list_init(&ptea->tea_t.l);
+	//ptea->tea.h_object = 1;
+	ptea->tea.display_human = sch_tea_display;
+	mt_list_init(&ptea->tea.l);
 }
 
 // 将当前老师链到list上去
-void sch_tea_insert(mt_list_t *h, struct tea *ptea) {
-	mt_list_insert_after(h, &ptea->tea_t.l);
+void sch_tea_insert(mt_list_t *h, struct teacher *ptea) {
+	mt_list_insert_after(h, &ptea->tea.l);
 }
 
-void sch_stu_init(struct stu *pstu, char *name, int num) {
+void sch_stu_init(struct student *pstu, char *name, int num) {
 	pstu->name = name;
 	pstu->num = num;
-	pstu->stu_t.disp_me = sch_stu_display;
-	mt_list_init(&pstu->stu_t.l);
+	pstu->stu.display_human = sch_stu_display;
+	mt_list_init(&pstu->stu.l);
 }
 
 // 将当前学生链到list上去
-void sch_stu_insert(mt_list_t *h, struct stu *pstu) {
-	mt_list_insert_after(h, &pstu->stu_t.l);
+void sch_stu_insert(mt_list_t *h, struct student *pstu) {
+	mt_list_insert_after(h, &pstu->stu.l);
 }
 
-void sch_wok_init(struct wok *pwok, char *name) {
+void sch_wok_init(struct worker *pwok, char *name) {
 	pwok->name = name;
-	pwok->wok_t.disp_me = sch_wok_display;
-	mt_list_init(&pwok->wok_t.l);
+	pwok->wok.display_human = sch_wok_display;
+	mt_list_init(&pwok->wok.l);
 }
 
-void sch_wok_insert(mt_list_t *h, struct wok *pwok) {
-	mt_list_insert_after(h, &pwok->wok_t.l);
+void sch_wok_insert(mt_list_t *h, struct worker *pwok) {
+	mt_list_insert_after(h, &pwok->wok.l);
 }
 
 // 把所有老师学生都打出来
 // 老师只打印名字，学生打名字和学号
 // teacher: tuzi
 // student: never, num: 1
-void sch_display_human(mt_list_t *h) {
-	struct type *ptype;
+// 这是框架函数，不需要被外部调用
+static void sch_display_human(mt_list_t *h) {
+	struct object *pobject;
 	mt_list_t *ptmp;
 
 	mt_list_for_each(ptmp, h) {
-		ptype = mt_list_entry(ptmp, struct type, l);
-		// 这是bug，初始化里定义disp_me，但从头到尾没有使用，而是用了传参的方法调用专用打印函数
-		//disp_me(ptype);
+		pobject = mt_list_entry(ptmp, struct object, l);
+		// 这是bug，初始化里定义display_human，但从头到尾没有使用，而是用了传参的方法调用专用打印函数
+		//display_human(pobject);
 		// 这才叫使用定义了的函数指针
-		ptype->disp_me(ptype);
+		pobject->display_human(pobject);
 	}
 }
 
-void sch_tea_display(struct type *ptype) {
-	struct tea *p;
+void sch_tea_display(struct object *pobject) {
+	struct teacher *p;
 
-	p = mt_list_entry(ptype, struct tea, tea_t);
+	p = mt_list_entry(pobject, struct teacher, tea);
 	printf("teacher: %s\n", p->name);
 }
 
-void sch_stu_display(struct type *ptype) {
-	struct stu *p;
+void sch_stu_display(struct object *pobject) {
+	struct student *p;
 
-	p = mt_list_entry(ptype, struct stu, stu_t);
+	p = mt_list_entry(pobject, struct student, stu);
 	printf("student: %s, num: %d\n", p->name, p->num);
 }
 
-void sch_wok_display(struct type *ptype) {
-	struct wok *p;
+void sch_wok_display(struct object *pobject) {
+	struct worker *p;
 
-	p = mt_list_entry(ptype, struct wok, wok_t);
+	p = mt_list_entry(pobject, struct worker, wok);
 	printf("worker: %s\n", p->name);
 }
 
