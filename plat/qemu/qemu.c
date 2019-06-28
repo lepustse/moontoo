@@ -86,6 +86,7 @@ static inline int mt_list_isempty(mt_list_t *l) {
 struct object;
 typedef void (*ds_t)(struct object *pobj);
 
+// 这个结构体应该是内部的
 struct object {
 	ds_t display_human;
 	mt_list_t l;
